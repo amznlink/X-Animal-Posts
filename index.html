@@ -4,7 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>𝕏 Animal Posts</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            color: white;
+        }
+
+        #tweet-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+        }
+
+        .post {
+            scroll-snap-align: start;
+            flex: 1 0 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .twitter-tweet {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .twitter-tweet iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -12,6 +51,62 @@
     <style type="text/css" id="twitter-style">
         .timeline { max-width: 100%; }
     </style>
-    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('data.csv')
+                .then(response => response.text())
+                .then(text => {
+                    const lines = text.split('\\n').filter(line => line.trim() !== '');
+                    const tweetContainer = document.getElementById('tweet-container');
+
+                    lines.forEach(line => {
+                        const tweetDiv = document.createElement('div');
+                        tweetDiv.className = 'post';
+                        tweetDiv.innerHTML = line.trim();
+                        tweetContainer.appendChild(tweetDiv);
+                    });
+
+                    // Load Twitter widgets script
+                    const script = document.createElement('script');
+                    script.src = 'https://platform.twitter.com/widgets.js';
+                    script.async = true;
+                    script.charset = 'utf-8';
+                    document.body.appendChild(script);
+
+                    // Adjust tweet dimensions after loading
+                    setTimeout(() => {
+                        $('.twitter-tweet').each(function() {
+                            const iframe = $(this).find('iframe');
+                            if (iframe.length) {
+                                const doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+                                $(doc).find('head').append($('#twitter-style'));
+                            }
+                        });
+                    }, 2000);
+
+                    // Set up IntersectionObserver to handle autoplay and pause
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            const iframe = entry.target.querySelector('iframe');
+                            if (iframe) {
+                                const src = iframe.getAttribute('src');
+                                const video = iframe.contentWindow.document.querySelector('video');
+                                if (entry.isIntersecting) {
+                                    iframe.setAttribute('src', src + (src.includes('?') ? '&' : '?') + 'autoplay=1');
+                                    if (video) video.play();
+                                } else {
+                                    iframe.setAttribute('src', src.replace('&autoplay=1', '').replace('?autoplay=1', ''));
+                                    if (video) video.pause();
+                                }
+                            }
+                        });
+                    }, { threshold: 0.75 });
+
+                    document.querySelectorAll('.post').forEach(post => {
+                        observer.observe(post);
+                    });
+                });
+        });
+    </script>
 </body>
 </html>
