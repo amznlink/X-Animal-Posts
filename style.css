@@ -1,26 +1,26 @@
 body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
     font-family: Arial, sans-serif;
+    margin: 0;
+    overflow: hidden;
+    background-color: #000;
+    color: white;
 }
 
 #tweet-container {
     display: flex;
     flex-direction: column;
-    width: 100vw;
     height: 100vh;
+    overflow-y: auto;
     scroll-snap-type: y mandatory;
-    overflow-y: scroll;
 }
 
 .post {
-    width: 100vw;
-    height: 100vh;
     scroll-snap-align: start;
+    flex: 1 0 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .twitter-tweet {
