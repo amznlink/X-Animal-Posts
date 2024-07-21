@@ -3,13 +3,13 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.text())
         .then(text => {
             const lines = text.split('\n').filter(line => line.trim() !== '');
-            const videoContainer = document.getElementById('video-container');
+            const tweetContainer = document.getElementById('tweet-container');
 
             lines.forEach(line => {
                 const tweetDiv = document.createElement('div');
                 tweetDiv.className = 'post';
                 tweetDiv.innerHTML = line.trim();
-                videoContainer.appendChild(tweetDiv);
+                tweetContainer.appendChild(tweetDiv);
             });
 
             // Set up IntersectionObserver to handle autoplay and pause
