@@ -7,9 +7,35 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="background-video"></div>
+
     <h1>𝕏 Animal Posts</h1>
     <div id="content">
-        <blockquote class="twitter-tweet" data-theme="dark"><p lang="en" dir="ltr">Look mom, what I can do..🐴💨😅 <a href="https://t.co/iwa1LK40lF">pic.twitter.com/iwa1LK40lF</a></p>&mdash; 𝕐o̴g̴ (@Yoda4ever) <a href="https://twitter.com/Yoda4ever/status/1815056661087912241?ref_src=twsrc%5Etfw">July 21, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        <blockquote class="twitter-tweet" data-media-max-width="560">
+            <p lang="en" dir="ltr">Look mom, what I can do..🐴💨😅 
+                <a href="https://t.co/iwa1LK40lF">pic.twitter.com/iwa1LK40lF</a>
+            </p>&mdash; 𝕐o̴g̴ (@Yoda4ever) 
+            <a href="https://twitter.com/Yoda4ever/status/1815056661087912241?ref_src=twsrc%5Etfw">July 21, 2024</a>
+        </blockquote>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     </div>
+
+    <script>
+        function setBackground() {
+            const now = new Date();
+            const hours = now.getHours();
+            const body = document.body;
+
+            if (hours >= 6 && hours < 12) {
+                body.classList.add('sunrise');
+            } else if (hours >= 12 && hours < 18) {
+                body.classList.add('noonday');
+            } else {
+                body.classList.add('sunset');
+            }
+        }
+
+        setBackground();
+    </script>
 </body>
 </html>
