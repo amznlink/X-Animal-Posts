@@ -19,15 +19,31 @@ document.addEventListener('DOMContentLoaded', function() {
             script.charset = 'utf-8';
             document.body.appendChild(script);
 
+            // Adjust tweet dimensions after loading
+            setTimeout(() => {
+                $('.twitter-tweet').each(function() {
+                    const iframe = $(this).find('iframe');
+                    if (iframe.length) {
+                        const doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
+                        $(doc).find('head').append($('#twitter-style'));
+                    }
+                });
+            }, 2000);
+
             // Set up IntersectionObserver to handle autoplay and pause
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     const iframe = entry.target.querySelector('iframe');
-                    const src = iframe ? iframe.getAttribute('src') : '';
-                    if (entry.isIntersecting && iframe) {
-                        iframe.setAttribute('src', src + (src.includes('?') ? '&' : '?') + 'autoplay=1');
-                    } else if (iframe) {
-                        iframe.setAttribute('src', src.replace('&autoplay=1', '').replace('?autoplay=1', ''));
+                    if (iframe) {
+                        const src = iframe.getAttribute('src');
+                        const video = iframe.contentWindow.document.querySelector('video');
+                        if (entry.isIntersecting) {
+                            iframe.setAttribute('src', src + (src.includes('?') ? '&' : '?') + 'autoplay=1');
+                            if (video) video.play();
+                        } else {
+                            iframe.setAttribute('src', src.replace('&autoplay=1', '').replace('?autoplay=1', ''));
+                            if (video) video.pause();
+                        }
                     }
                 });
             }, { threshold: 0.75 });
@@ -35,19 +51,5 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.post').forEach(post => {
                 observer.observe(post);
             });
-
-            // Adjust tweet dimensions after loading
-            setTimeout(() => {
-                document.querySelectorAll('.twitter-tweet').forEach(tweet => {
-                    const shadowRoot = tweet.shadowRoot;
-                    if (shadowRoot) {
-                        const embeddedTweet = shadowRoot.querySelector('.EmbeddedTweet');
-                        if (embeddedTweet) {
-                            embeddedTweet.style.width = '99%';
-                            embeddedTweet.style.maxWidth = '100%';
-                        }
-                    }
-                });
-            }, 2000);
         });
 });
