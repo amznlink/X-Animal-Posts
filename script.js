@@ -16,11 +16,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (type === 'twitter') {
                     const tweetEmbed = document.createElement('blockquote');
                     tweetEmbed.className = 'twitter-tweet';
-                    const link = document.createElement('a');
-                    link.href = url.trim();
-                    tweetEmbed.appendChild(link);
+                    tweetEmbed.setAttribute('data-media-max-width', '560');
+                    const tweetContent = document.createElement('p');
+                    const tweetLink = document.createElement('a');
+                    tweetLink.href = url.trim();
+                    tweetContent.appendChild(tweetLink);
+                    tweetEmbed.appendChild(tweetContent);
+
+                    // Adding the script tag for Twitter widgets.js
+                    const script = document.createElement('script');
+                    script.src = 'https://platform.twitter.com/widgets.js';
+                    script.async = true;
+                    script.charset = 'utf-8';
+
                     postDiv.appendChild(tweetEmbed);
                     contentDiv.appendChild(postDiv);
+                    document.body.appendChild(script);
                 } else if (type === 'youtube') {
                     const iframe = document.createElement('iframe');
                     iframe.width = '560';
@@ -33,11 +44,5 @@ document.addEventListener('DOMContentLoaded', function() {
                     contentDiv.appendChild(postDiv);
                 }
             });
-
-            // Load Twitter widgets script
-            const script = document.createElement('script');
-            script.src = 'https://platform.twitter.com/widgets.js';
-            script.async = true;
-            document.body.appendChild(script);
         });
 });
