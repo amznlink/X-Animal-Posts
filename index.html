@@ -28,6 +28,7 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            height: 100vh;
         }
 
         .twitter-tweet {
@@ -90,13 +91,10 @@
                             const iframe = entry.target.querySelector('iframe');
                             if (iframe) {
                                 const src = iframe.getAttribute('src');
-                                const video = iframe.contentWindow.document.querySelector('video');
                                 if (entry.isIntersecting) {
                                     iframe.setAttribute('src', src + (src.includes('?') ? '&' : '?') + 'autoplay=1');
-                                    if (video) video.play();
                                 } else {
                                     iframe.setAttribute('src', src.replace('&autoplay=1', '').replace('?autoplay=1', ''));
-                                    if (video) video.pause();
                                 }
                             }
                         });
