@@ -35,5 +35,19 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.post').forEach(post => {
                 observer.observe(post);
             });
+
+            // Adjust tweet dimensions after loading
+            setTimeout(() => {
+                document.querySelectorAll('.twitter-tweet').forEach(tweet => {
+                    const shadowRoot = tweet.shadowRoot;
+                    if (shadowRoot) {
+                        const embeddedTweet = shadowRoot.querySelector('.EmbeddedTweet');
+                        if (embeddedTweet) {
+                            embeddedTweet.style.width = '99%';
+                            embeddedTweet.style.maxWidth = '100%';
+                        }
+                    }
+                });
+            }, 2000);
         });
 });
