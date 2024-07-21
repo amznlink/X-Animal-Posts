@@ -71,24 +71,25 @@
                     script.charset = 'utf-8';
                     document.body.appendChild(script);
 
-                    // Adjust tweet dimensions after loading
-                    setTimeout(() => {
-                        $('.twitter-tweet').each(function() {
-                            const iframe = $(this).find('iframe');
-                            if (iframe.length) {
-                                const doc = iframe[0].contentDocument || iframe[0].contentWindow.document;
-                                $(doc).find('head').append($('#twitter-style'));
-                            }
-                        });
-                    }, 2000);
-
-                    // Set up IntersectionObserver to handle autoplay and pause
+                    // Set up IntersectionObserver to handle autoplay and expand
                     const observer = new IntersectionObserver((entries) => {
                         entries.forEach(entry => {
                             if (entry.isIntersecting) {
-                                const playButton = entry.target.querySelector('.Icon--playCircle');
-                                if (playButton) {
-                                    playButton.click();
+                                const iframe = entry.target.querySelector('iframe');
+                                if (iframe) {
+                                    const doc = iframe.contentDocument || iframe.contentWindow.document;
+
+                                    // Click play button
+                                    const playButton = doc.querySelector('.Icon--playCircle');
+                                    if (playButton) {
+                                        playButton.click();
+                                    }
+
+                                    // Click expander
+                                    const expander = doc.querySelector('.expander');
+                                    if (expander) {
+                                        expander.click();
+                                    }
                                 }
                             }
                         });
