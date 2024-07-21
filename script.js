@@ -12,11 +12,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 videoContainer.appendChild(tweetDiv);
             });
 
-            // Load Twitter widgets script
-            const script = document.createElement('script');
-            script.src = 'https://platform.twitter.com/widgets.js';
-            script.async = true;
-            script.charset = 'utf-8';
-            document.body.appendChild(script);
+            // Set up IntersectionObserver to handle autoplay and pause
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const iframe = entry.target.querySelector('iframe');
+                    const src = iframe ? iframe.getAttribute('src') : '';
+                    if (entry.isIntersecting && iframe) {
+                        iframe.setAttribute('src', src + (src.includes('?') ? '&' : '?') + 'autoplay=1');
+                    } else if (iframe) {
+                        iframe.setAttribute('src', src.replace('&autoplay=1', '').replace('?autoplay=1', ''));
+                    }
+                });
+            }, { threshold: 0.75 });
+
+            document.querySelectorAll('.post').forEach(post => {
+                observer.observe(post);
+            });
         });
 });
