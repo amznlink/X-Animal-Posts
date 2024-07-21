@@ -6,18 +6,10 @@ document.addEventListener('DOMContentLoaded', function() {
             const videoContainer = document.getElementById('video-container');
 
             lines.forEach(line => {
-                const [type, url] = line.split(',');
-                if (type === 'twitter') {
-                    const oEmbedURL = `https://publish.twitter.com/oembed?url=${url.trim()}&hide_thread=true&hide_media=true&align=center`;
-                    fetch(oEmbedURL)
-                        .then(response => response.json())
-                        .then(data => {
-                            const tweetDiv = document.createElement('div');
-                            tweetDiv.className = 'post';
-                            tweetDiv.innerHTML = data.html;
-                            videoContainer.appendChild(tweetDiv);
-                        });
-                }
+                const tweetDiv = document.createElement('div');
+                tweetDiv.className = 'post';
+                tweetDiv.innerHTML = line.trim();
+                videoContainer.appendChild(tweetDiv);
             });
 
             // Load Twitter widgets script
