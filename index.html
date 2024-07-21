@@ -49,15 +49,12 @@
 </head>
 <body>
     <div id="tweet-container"></div>
-    <style type="text/css" id="twitter-style">
-        .timeline { max-width: 100%; }
-    </style>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             fetch('data.csv')
                 .then(response => response.text())
                 .then(text => {
-                    const lines = text.split('\\n').filter(line => line.trim() !== '');
+                    const lines = text.split('\n').filter(line => line.trim() !== '');
                     const tweetContainer = document.getElementById('tweet-container');
 
                     lines.forEach(line => {
@@ -90,11 +87,15 @@
                         entries.forEach(entry => {
                             const iframe = entry.target.querySelector('iframe');
                             if (iframe) {
-                                const src = iframe.getAttribute('src');
+                                let src = iframe.getAttribute('src');
                                 if (entry.isIntersecting) {
-                                    iframe.setAttribute('src', src + (src.includes('?') ? '&' : '?') + 'autoplay=1');
+                                    if (!src.includes('autoplay=1')) {
+                                        src += (src.includes('?') ? '&' : '?') + 'autoplay=1';
+                                        iframe.setAttribute('src', src);
+                                    }
                                 } else {
-                                    iframe.setAttribute('src', src.replace('&autoplay=1', '').replace('?autoplay=1', ''));
+                                    src = src.replace('&autoplay=1', '').replace('?autoplay=1', '');
+                                    iframe.setAttribute('src', src);
                                 }
                             }
                         });
