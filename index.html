@@ -36,7 +36,7 @@
             background-color: black;
         }
 
-        video {
+        iframe {
             width: 100%;
             height: 100%;
         }
@@ -59,7 +59,7 @@
                 const response = await fetch(oEmbedUrl);
                 const data = await response.json();
                 const html = data.html;
-                const videoUrlMatch = html.match(/<video[^>]*src="([^"]*)"/);
+                const videoUrlMatch = html.match(/<iframe[^>]*src="([^"]*)"/);
 
                 if (videoUrlMatch && videoUrlMatch[1]) {
                     return videoUrlMatch[1];
@@ -76,27 +76,35 @@
         async function initialize() {
             const tweetUrls = await fetchCSV();
             const tweetContainer = document.getElementById('tweet-container');
+            const lastVideoUrl = tweetUrls[tweetUrls.length - 1];
 
             for (const tweetUrl of tweetUrls) {
                 const videoUrl = await loadTweetVideo(tweetUrl);
                 if (videoUrl) {
                     const videoWrapper = document.createElement('div');
                     videoWrapper.className = 'video-wrapper';
-                    const videoElement = document.createElement('video');
-                    videoElement.src = videoUrl;
-                    videoElement.controls = true;
-                    videoWrapper.appendChild(videoElement);
+                    const iframe = document.createElement('iframe');
+                    iframe.src = videoUrl;
+                    iframe.allow = 'autoplay';
+                    videoWrapper.appendChild(iframe);
                     tweetContainer.appendChild(videoWrapper);
+
+                    // Automatically play the last video URL when the page loads
+                    if (tweetUrl === lastVideoUrl) {
+                        iframe.onload = () => {
+                            iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                        };
+                    }
                 }
             }
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    const video = entry.target.querySelector('video');
+                    const iframe = entry.target.querySelector('iframe');
                     if (entry.isIntersecting) {
-                        video.play();
+                        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
                     } else {
-                        video.pause();
+                        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
                     }
                 });
             }, { threshold: 0.75 });
