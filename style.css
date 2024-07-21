@@ -1,0 +1,46 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    color: black;
+    margin: 10px 0;
+}
+
+#content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    color: black;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.post {
+    margin: 20px;
+    width: 100%;
+    max-width: 600px;
+}
+
+@media (max-width: 600px) {
+    .post {
+        width: 100%;
+        margin: 0;
+    }
+}
