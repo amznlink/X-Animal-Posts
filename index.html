@@ -36,7 +36,7 @@
             background-color: black;
         }
 
-        .twitter-tweet {
+        iframe {
             width: 100%;
             height: 100%;
         }
@@ -45,6 +45,7 @@
 <body>
     <div id="tweet-container"></div>
 
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script>
         async function fetchCSV() {
             const response = await fetch('data.csv');
@@ -54,24 +55,26 @@
         }
 
         function createTweetEmbed(tweetUrl) {
-            return `
-                <blockquote class="twitter-tweet" data-lang="en">
+            const wrapper = document.createElement('div');
+            wrapper.className = 'tweet-wrapper';
+            wrapper.innerHTML = `
+                <blockquote class="twitter-tweet">
                     <a href="${tweetUrl}"></a>
                 </blockquote>
-                <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
             `;
+            return wrapper;
         }
 
         async function initialize() {
             const tweetUrls = await fetchCSV();
             const tweetContainer = document.getElementById('tweet-container');
 
-            for (const tweetUrl of tweetUrls) {
-                const tweetWrapper = document.createElement('div');
-                tweetWrapper.className = 'tweet-wrapper';
-                tweetWrapper.innerHTML = createTweetEmbed(tweetUrl);
-                tweetContainer.appendChild(tweetWrapper);
-            }
+            tweetUrls.forEach(tweetUrl => {
+                const tweetEmbed = createTweetEmbed(tweetUrl);
+                tweetContainer.appendChild(tweetEmbed);
+            });
+
+            twttr.widgets.load();  // Initialize Twitter widgets
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
