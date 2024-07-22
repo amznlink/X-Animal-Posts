@@ -27,6 +27,13 @@
             background-color: black;
         }
 
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
         #loading-indicator {
             position: absolute;
             top: 50%;
@@ -39,6 +46,7 @@
 </head>
 <body>
     <div id="video-container">
+        <video id="video-player" controls autoplay></video>
         <div id="loading-indicator">Loading...</div>
     </div>
 
@@ -65,12 +73,21 @@
             return url; // return original if no match
         }
 
-        function loadVideo(tweetUrl) {
+        async function loadVideo(tweetUrl) {
             const loadingIndicator = document.getElementById('loading-indicator');
+            const videoPlayer = document.getElementById('video-player');
+
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
-                window.location.href = tweetUrl;
+                const response = await fetch(tweetUrl);
+                const text = await response.text();
+                const videoUrlMatch = text.match(/src="([^"]+\.(mp4|webm|ogg))"/);
+                if (videoUrlMatch && videoUrlMatch[1]) {
+                    videoPlayer.src = videoUrlMatch[1];
+                } else {
+                    throw new Error('Video URL not found');
+                }
             } catch (error) {
                 console.error('Error loading video:', error);
                 // You can also display an error message to the user here
