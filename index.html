@@ -61,23 +61,19 @@
             return lines.map(line => line.trim());
         }
 
-        function createTweetEmbed(tweetUrl) {
+        function createTweetEmbed(tweetHtml) {
             const wrapper = document.createElement('div');
             wrapper.className = 'tweet-wrapper';
-            wrapper.innerHTML = `
-                <blockquote class="twitter-tweet">
-                    <a href="${tweetUrl}"></a>
-                </blockquote>
-            `;
+            wrapper.innerHTML = tweetHtml;
             return wrapper;
         }
 
         async function initialize() {
-            const tweetUrls = await fetchCSV();
+            const tweetHtmls = await fetchCSV();
             const tweetContainer = document.getElementById('tweet-container');
 
-            for (const tweetUrl of tweetUrls) {
-                const tweetWrapper = createTweetEmbed(tweetUrl);
+            for (const tweetHtml of tweetHtmls) {
+                const tweetWrapper = createTweetEmbed(tweetHtml);
                 tweetContainer.appendChild(tweetWrapper);
             }
 
