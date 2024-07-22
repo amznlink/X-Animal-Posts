@@ -64,7 +64,11 @@
         function createTweetEmbed(tweetUrl) {
             const wrapper = document.createElement('div');
             wrapper.className = 'tweet-wrapper';
-            wrapper.innerHTML = '<blockquote class="twitter-tweet"><a href="${tweetUrl}"></a></blockquote><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script/>;
+            wrapper.innerHTML = `
+                <blockquote class="twitter-tweet">
+                    <a href="${tweetUrl}"></a>
+                </blockquote>
+            `;
             return wrapper;
         }
 
