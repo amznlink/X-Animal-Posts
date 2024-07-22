@@ -80,6 +80,29 @@
         }
 
         document.addEventListener('DOMContentLoaded', initialize);
+
+        function playVideo(iframe) {
+            iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        }
+
+        function pauseVideo(iframe) {
+            iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        }
+
+        document.querySelectorAll('.tweet-wrapper').forEach(wrapper => {
+            const iframe = wrapper.querySelector('iframe');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        playVideo(iframe);
+                    } else {
+                        pauseVideo(iframe);
+                    }
+                });
+            }, { threshold: 0.75 });
+
+            observer.observe(wrapper);
+        });
     </script>
 </body>
 </html>
