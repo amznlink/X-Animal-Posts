@@ -48,7 +48,7 @@
             if (match) {
                 const username = match[1];
                 const tweetId = match[2];
-                return `currentTweet=${tweetId}&currentTweetUser=${username}`;
+                return `https://x.com/${username}/status/${tweetId}/mediaViewer?currentTweet=${tweetId}&currentTweetUser=${username}`;
             }
             return ''; // return empty string if no match
         }
@@ -58,10 +58,10 @@
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
-                const baseUrl = 'https://x.com/mediaViewer?';
-                const currentTweet = tweetUrls[currentTweetIndex];
-                const finalUrl = baseUrl + currentTweet;
-                window.location.href = finalUrl; // Redirect the web view to the constructed URL
+                const currentTweetUrl = tweetUrls[currentTweetIndex];
+                if (currentTweetUrl) {
+                    window.location.href = currentTweetUrl; // Redirect the web view to the constructed URL
+                }
 
                 currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
             } catch (error) {
