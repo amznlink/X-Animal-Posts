@@ -70,6 +70,17 @@
 
                 tweetContainer.innerHTML = htmlString;
 
+                // Attempt to simulate a click on the video
+                setTimeout(() => {
+                    const tweetIFrame = tweetContainer.querySelector('iframe');
+                    if (tweetIFrame) {
+                        const videoElement = tweetIFrame.contentWindow.document.querySelector('video');
+                        if (videoElement) {
+                            videoElement.play();
+                        }
+                    }
+                }, 2000); // Adjust the timeout as necessary
+
                 currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
             } catch (error) {
                 console.error('Error loading tweet:', error);
