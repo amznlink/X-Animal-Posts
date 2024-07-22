@@ -1,124 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html dir="ltr" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>𝕏 Animal Posts</title>
-    <link rel="preconnect" href="//abs.twimg.com">
-    <link rel="dns-prefetch" href="//abs.twimg.com">
-    <link rel="preconnect" href="//api.twitter.com">
-    <link rel="dns-prefetch" href="//api.twitter.com">
-    <link rel="preconnect" href="//api.x.com">
-    <link rel="dns-prefetch" href="//api.x.com">
-    <link rel="preconnect" href="//pbs.twimg.com">
-    <link rel="dns-prefetch" href="//pbs.twimg.com">
-    <link rel="preconnect" href="//t.co">
-    <link rel="dns-prefetch" href="//t.co">
-    <link rel="preconnect" href="//video.twimg.com">
-    <link rel="dns-prefetch" href="//video.twimg.com">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Twitter">
-    <meta name="apple-mobile-web-app-status-bar-style" content="white">
-    <meta name="theme-color" content="#FFFFFF">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0, viewport-fit=cover" />
+    <title>X Animal Videos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.3/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRIP7elNh5DFFtc0BjfGm5/6pCJ38tf2wQnsM0Fq8" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRIP7elNh5DFFtc0BjfGm5/6pCJ38tf2wQnsM0Fq8" crossorigin="anonymous"></script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: #000;
-            color: white;
-            overflow: hidden;
-        }
-
-        #tweet-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: black;
-            overflow: hidden;
-        }
-
-        #loading-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 24px;
-            display: none;
-            color: white;
-        }
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #FFFFFF; }
+        .tweet-container { margin: 20px auto; max-width: 600px; }
     </style>
 </head>
 <body>
-    <div id="tweet-container">
-        <div id="loading-indicator">Loading...</div>
+    <div class="container">
+        <h1 class="text-center my-4">X Animal Videos</h1>
+        <div id="tweets"></div>
     </div>
 
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script>
-        let currentTweetIndex = 0;
-        let tweetUrls = [];
-
-        async function fetchCSV() {
-            const response = await fetch('data.csv');
-            const text = await response.text();
-            const lines = text.split('\n').filter(line => line.trim() !== '');
-            tweetUrls = lines.map(line => line.trim());
-            loadTweet();
-        }
-
-        async function loadTweet() {
-            const loadingIndicator = document.getElementById('loading-indicator');
-            const tweetContainer = document.getElementById('tweet-container');
-
-            loadingIndicator.style.display = 'block';
-            tweetContainer.innerHTML = ''; // Clear previous content
-
-            try {
-                const currentTweetUrl = tweetUrls[currentTweetIndex];
-                const oEmbedResponse = await fetch(`https://publish.twitter.com/oembed?url=${currentTweetUrl}&hide_thread=true&hide_media=false`);
-                const oEmbedData = await oEmbedResponse.json();
-                const htmlString = oEmbedData.html;
-
-                tweetContainer.innerHTML = htmlString;
-
-                if (window.twttr && window.twttr.widgets) {
-                    window.twttr.widgets.load(tweetContainer);
+        $(document).ready(function() {
+            $.ajax({
+                url: 'data.csv',
+                dataType: 'text',
+                success: function(data) {
+                    var tweets = data.split('\n');
+                    tweets.forEach(function(tweetUrl) {
+                        if (tweetUrl) {
+                            var tweetEmbed = '<blockquote class="twitter-tweet"><a href="' + tweetUrl + '"></a></blockquote>';
+                            $('#tweets').append('<div class="tweet-container">' + tweetEmbed + '</div>');
+                        }
+                    });
+                    twttr.widgets.load();
                 }
-
-                setTimeout(() => {
-                    const iframe = tweetContainer.querySelector('iframe');
-                    if (iframe) {
-                        iframe.contentWindow.postMessage({ method: 'play' }, '*');
-                    }
-                }, 1000);
-
-                currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length;
-            } catch (error) {
-                console.error('Error loading tweet:', error);
-            } finally {
-                loadingIndicator.style.display = 'none';
-            }
-        }
-
-        function handleSwipe(event) {
-            if (event.deltaY > 0) {
-                currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length;
-            } else {
-                currentTweetIndex = (currentTweetIndex - 1 + tweetUrls.length) % tweetUrls.length;
-            }
-            loadTweet();
-        }
-
-        document.addEventListener('DOMContentLoaded', fetchCSV);
-        document.getElementById('tweet-container').addEventListener('wheel', handleSwipe);
-        document.getElementById('tweet-container').addEventListener('click', loadTweet);
+            });
+        });
     </script>
 </body>
 </html>
