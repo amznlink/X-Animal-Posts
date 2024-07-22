@@ -39,6 +39,8 @@
         iframe {
             width: 100%;
             height: 100%;
+            object-fit: cover;
+            object-position: center;
         }
     </style>
 </head>
@@ -47,39 +49,37 @@
 
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script>
-        async<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-  <script>
-    async function fetchCSV() {
-      const response = await fetch('data.csv');
-      const text = await response.text();
-      const lines = text.split('\n').filter(line => line.trim() !== '');
-      return lines.map(line => line.trim());
-    }
+        async function fetchCSV() {
+            const response = await fetch('data.csv');
+            const text = await response.text();
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            return lines.map(line => line.trim());
+        }
 
-    function createTweetEmbed(tweetUrl) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'tweet-wrapper';
-      wrapper.innerHTML = `
-        <blockquote class="twitter-tweet">
-          <a href="${tweetUrl}"></a>
-        </blockquote>
-      `;
-      return wrapper;
-    }
+        function createTweetEmbed(tweetUrl) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'tweet-wrapper';
+            wrapper.innerHTML = `
+                <blockquote class="twitter-tweet">
+                    <a href="${tweetUrl}"></a>
+                </blockquote>
+            `;
+            return wrapper;
+        }
 
-    async function initialize() {
-      const tweetUrls = await fetchCSV();
-      const tweetContainer = document.getElementById('tweet-container');
+        async function initialize() {
+            const tweetUrls = await fetchCSV();
+            const tweetContainer = document.getElementById('tweet-container');
 
-      for (const tweetUrl of tweetUrls) {
-        const tweetWrapper = createTweetEmbed(tweetUrl);
-        tweetContainer.appendChild(tweetWrapper);
-      }
+            for (const tweetUrl of tweetUrls) {
+                const tweetWrapper = createTweetEmbed(tweetUrl);
+                tweetContainer.appendChild(tweetWrapper);
+            }
 
-      twttr.widgets.load();
-    }
+            twttr.widgets.load();
+        }
 
-    document.addEventListener('DOMContentLoaded', initialize);
-  </script>
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
 </body>
 </html>
