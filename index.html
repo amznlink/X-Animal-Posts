@@ -78,7 +78,12 @@
                 tweetContainer.appendChild(tweetWrapper);
             }
 
-            twttr.widgets.load();
+            twttr.widgets.load({
+                features: {
+                    autoplay: true,
+                    fullscreen: true
+                }
+            });
 
             setTimeout(() => {
                 const observer = new IntersectionObserver((entries) => {
@@ -87,7 +92,9 @@
                         if (iframe) {
                             if (entry.isIntersecting) {
                                 iframe.contentWindow.postMessage({
-                                    command: 'playVideo'
+                                    command: 'playVideo',
+                                    autoplay: true,
+                                    fullscreen: true
                                 }, '*');
                             } else {
                                 iframe.contentWindow.postMessage({
