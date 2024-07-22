@@ -31,6 +31,7 @@
     <div id="loading-indicator">Loading...</div>
 
     <script>
+        let currentTweetIndex = 0;
         let tweetUrls = [];
 
         async function fetchCSV() {
@@ -38,9 +39,7 @@
             const text = await response.text();
             const lines = text.split('\n').filter(line => line.trim() !== '');
             tweetUrls = lines.map(line => convertToMediaViewerUrl(line.trim()));
-            if (tweetUrls.length > 0) {
-                loadMediaViewer(tweetUrls);
-            }
+            loadMediaViewer();
         }
 
         function convertToMediaViewerUrl(url) {
@@ -54,26 +53,20 @@
             return ''; // return empty string if no match
         }
 
-        function loadMediaViewer(tweetUrls) {
+        function loadMediaViewer() {
             const loadingIndicator = document.getElementById('loading-indicator');
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
-                const baseUrlMatch = tweetUrls[0].match(/currentTweet=(\d+)&currentTweetUser=([^&]+)/);
-                if (baseUrlMatch) {
-                    const tweetId = baseUrlMatch[1];
-                    const username = baseUrlMatch[2];
-                    let combinedUrl = `https://x.com/${username}/status/${tweetId}/mediaViewer?`;
-
-                    tweetUrls.forEach(tweet => {
-                        combinedUrl += tweet + '&';
-                    });
-
-                    combinedUrl = combinedUrl.slice(0, -1); // Remove the trailing '&'
-                    window.location.href = combinedUrl; // Redirect the web view to the constructed URL
-                } else {
-                    throw new Error('Base URL could not be constructed');
+                const baseUrl = 'https://x.com/Rainmaker1973/status/1815013860010574110/mediaViewer?currentTweet=1815013860010574110&currentTweetUser=Rainmaker1973?';
+                let combinedUrl = baseUrl;
+                for (let i = 0; i < tweetUrls.length; i++) {
+                    combinedUrl += tweetUrls[i] + '&';
                 }
+                combinedUrl = combinedUrl.slice(0, -1); // Remove the trailing '&'
+                window.location.href = combinedUrl; // Redirect the web view to the constructed URL
+
+                currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
             } catch (error) {
                 console.error('Error loading media viewer:', error);
                 // You can also display an error message to the user here
