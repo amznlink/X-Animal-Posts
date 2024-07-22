@@ -52,6 +52,7 @@
     </div>
 
     <script>
+        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
         let currentVideoIndex = 0;
         let tweetUrls = [];
 
@@ -75,8 +76,32 @@
         }
 
         async function loadVideo(tweetUrl) {
-            const iframe = document.getElementById('video-iframe');
-            iframe.src = tweetUrl;
+            const loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) loadingIndicator.style.display = 'block';
+
+            try {
+                const videoUrl = await extractVideoUrl(proxyUrl + tweetUrl);
+                const iframe = document.getElementById('video-iframe');
+                iframe.src = videoUrl;
+            } catch (error) {
+                console.error('Error loading video:', error);
+                // You can also display an error message to the user here
+            } finally {
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+            }
+        }
+
+        async function extractVideoUrl(tweetUrl) {
+            const response = await fetch(tweetUrl);
+            const text = await response.text();
+
+            // Improved RegEx to capture various video formats (might still need adjustments)
+            const videoUrlMatch = text.match(/href="([^"]+\.(mp4|webm|ogg))"/);
+            if (videoUrlMatch && videoUrlMatch[1]) {
+                return videoUrlMatch[1];
+            }
+
+            throw new Error('Video URL not found');
         }
 
         function handleSwipe(event) {
