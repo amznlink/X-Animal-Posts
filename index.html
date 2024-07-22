@@ -59,42 +59,51 @@
             const response = await fetch('data.csv');
             const text = await response.text();
             const lines = text.split('\n').filter(line => line.trim() !== '');
-            tweetUrls = lines.map(line => convertToMediaViewerUrl(line.trim()));
-            loadMediaViewer();
+            tweetUrls = lines.map(line => convertToTweetUrl(line.trim()));
+            loadTweet();
         }
 
-        function convertToMediaViewerUrl(url) {
+        function convertToTweetUrl(url) {
             const regex = /https:\/\/x\.com\/([^\/]+)\/status\/(\d+).*/;
             const match = url.match(regex);
             if (match) {
                 const username = match[1];
                 const tweetId = match[2];
-                return `currentTweet=${tweetId}&currentTweetUser=${username}`;
+                return `https://x.com/${username}/status/${tweetId}`;
             }
             return ''; // return empty string if no match
         }
 
-        function loadMediaViewer() {
+        function loadTweet() {
             const loadingIndicator = document.getElementById('loading-indicator');
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
-                const baseUrl = 'https://x.com/Rainmaker1973/status/1815013860010574110/mediaViewer?';
                 const currentTweet = tweetUrls[currentTweetIndex];
-                const finalUrl = baseUrl + currentTweet;
                 const iframe = document.getElementById('video-iframe');
-                iframe.src = finalUrl;
+                iframe.src = currentTweet;
 
                 currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
             } catch (error) {
-                console.error('Error loading media viewer:', error);
+                console.error('Error loading tweet:', error);
                 // You can also display an error message to the user here
             } finally {
                 if (loadingIndicator) loadingIndicator.style.display = 'none';
             }
         }
 
+        function handleSwipe(event) {
+            if (event.deltaY > 0) {
+                currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length;
+            } else {
+                currentTweetIndex = (currentTweetIndex - 1 + tweetUrls.length) % tweetUrls.length;
+            }
+            loadTweet();
+        }
+
         document.addEventListener('DOMContentLoaded', fetchCSV);
+        document.getElementById('video-container').addEventListener('wheel', handleSwipe);
+        document.getElementById('video-container').addEventListener('click', loadTweet);
     </script>
 </body>
 </html>
