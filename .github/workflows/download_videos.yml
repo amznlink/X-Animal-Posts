@@ -1,4 +1,4 @@
-name: Download Videos and Generate HTML
+name: Download Videos and Update Metadata
 
 on:
   push:
