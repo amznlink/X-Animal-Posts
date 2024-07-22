@@ -17,6 +17,24 @@
             overflow: hidden;
         }
 
+        #video-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: black;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            object-fit: cover;
+            object-position: center;
+        }
+
         #loading-indicator {
             position: absolute;
             top: 50%;
@@ -28,7 +46,10 @@
     </style>
 </head>
 <body>
-    <div id="loading-indicator">Loading...</div>
+    <div id="video-container">
+        <iframe id="video-iframe" sandbox="allow-scripts allow-same-origin allow-popups" allow="autoplay; fullscreen"></iframe>
+        <div id="loading-indicator">Loading...</div>
+    </div>
 
     <script>
         let currentTweetIndex = 0;
@@ -58,13 +79,11 @@
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
-                const baseUrl = 'https://x.com/Rainmaker1973/status/1815013860010574110/mediaViewer?currentTweet=1815013860010574110&currentTweetUser=Rainmaker1973?';
-                let combinedUrl = baseUrl;
-                for (let i = 0; i < tweetUrls.length; i++) {
-                    combinedUrl += tweetUrls[i] + '&';
-                }
-                combinedUrl = combinedUrl.slice(0, -1); // Remove the trailing '&'
-                window.location.href = combinedUrl; // Redirect the web view to the constructed URL
+                const baseUrl = 'https://x.com/Rainmaker1973/status/1815013860010574110/mediaViewer?';
+                const currentTweet = tweetUrls[currentTweetIndex];
+                const finalUrl = baseUrl + currentTweet;
+                const iframe = document.getElementById('video-iframe');
+                iframe.src = finalUrl;
 
                 currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
             } catch (error) {
