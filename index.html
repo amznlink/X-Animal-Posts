@@ -17,7 +17,7 @@
             overflow: hidden;
         }
 
-        #tweet-container {
+        #video-container {
             position: relative;
             width: 100%;
             height: 100vh;
@@ -26,23 +26,16 @@
             align-items: center;
             background-color: black;
         }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            object-fit: cover;
-            object-position: center;
-        }
+        
     </style>
 </head>
 <body>
-    <div id="tweet-container">
-        <iframe id="tweet-iframe" allow="autoplay; fullscreen"></iframe>
+    <div id="video-container">
+        <iframe id="video-iframe" allow="autoplay; fullscreen"></iframe>
     </div>
 
     <script>
-        let currentTweetIndex = 0;
+        let currentVideoIndex = 0;
         let tweetUrls = [];
 
         async function fetchCSV() {
@@ -50,27 +43,47 @@
             const text = await response.text();
             const lines = text.split('\n').filter(line => line.trim() !== '');
             tweetUrls = lines.map(line => line.trim());
-            loadTweet(tweetUrls[currentTweetIndex]);
+            loadVideo(tweetUrls[currentVideoIndex]);
         }
 
-        function loadTweet(tweetUrl) {
-            const iframe = document.getElementById('tweet-iframe');
-            iframe.src = `https://twitframe.com/show?url=${tweetUrl}`;
+        async function extractVideoUrl(tweetUrl) {
+            // Fetch the oEmbed data from Twitter
+            const oEmbedResponse = await fetch(`https://publish.twitter.com/oembed?url=${tweetUrl}`);
+            const oEmbedData = await oEmbedResponse.json();
+            const htmlString = oEmbedData.html;
+
+            // Extract the video URL from the oEmbed HTML
+            const videoUrlMatch = htmlString.match(/src="([^"]+)"/);
+            if (videoUrlMatch && videoUrlMatch[1]) {
+                return videoUrlMatch[1];
+            }
+
+            throw new Error('Video URL not found');
+        }
+
+        async function loadVideo(tweetUrl) {
+            try {
+                const videoUrl = await extractVideoUrl(tweetUrl);
+                const iframe = document.getElementById('video-iframe');
+                iframe.src = videoUrl;
+            } catch (error) {
+                console.error('Error loading video:', error);
+            }
         }
 
         function handleSwipe(event) {
             if (event.deltaY > 0) {
                 // Swipe down or scroll down
-                currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length;
+                currentVideoIndex = (currentVideoIndex + 1) % tweetUrls.length;
             } else {
                 // Swipe up or scroll up
-                currentTweetIndex = (currentTweetIndex - 1 + tweetUrls.length) % tweetUrls.length;
+                currentVideoIndex = (currentVideoIndex - 1 + tweetUrls.length) % tweetUrls.length;
             }
-            loadTweet(tweetUrls[currentTweetIndex]);
+            loadVideo(tweetUrls[currentVideoIndex]);
         }
 
         document.addEventListener('DOMContentLoaded', fetchCSV);
-        document.getElementById('tweet-container').addEventListener('wheel', handleSwipe);
+        document.getElementById('video-container').addEventListener('wheel', handleSwipe);
     </script>
 </body>
 </html>
