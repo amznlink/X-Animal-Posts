@@ -34,11 +34,21 @@
             object-fit: cover;
             object-position: center;
         }
+
+        #loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div id="video-container">
         <iframe id="video-iframe" allow="autoplay; fullscreen"></iframe>
+        <div id="loading-indicator">Loading...</div>
     </div>
 
     <script>
@@ -67,12 +77,18 @@
         }
 
         async function loadVideo(tweetUrl) {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) loadingIndicator.style.display = 'block';
+
             try {
                 const videoUrl = await extractVideoUrl(tweetUrl);
                 const iframe = document.getElementById('video-iframe');
                 iframe.src = videoUrl;
             } catch (error) {
                 console.error('Error loading video:', error);
+                // You can also display an error message to the user here
+            } finally {
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
             }
         }
 
