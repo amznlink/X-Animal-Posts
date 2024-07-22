@@ -55,38 +55,28 @@
         let currentVideoIndex = 0;
         let tweetUrls = [];
 
-        function convertTweetUrl(originalUrl) {
-            const url = new URL(originalUrl);
-            const pathSegments = url.pathname.split('/');
-
-            // Extract the username and tweet ID from the URL
-            const username = pathSegments[1];
-            const tweetId = pathSegments[3];
-
-            // Construct the new URL
-            const newUrl = `https://x.com/${username}/status/${tweetId}/mediaViewer?currentTweet=${tweetId}&currentTweetUser=${username}`;
-
-            return newUrl;
-        }
-
         async function fetchCSV() {
             const response = await fetch('data.csv');
             const text = await response.text();
             const lines = text.split('\n').filter(line => line.trim() !== '');
-            tweetUrls = lines.map(line => convertTweetUrl(line.trim()));
+            tweetUrls = lines.map(line => convertToMediaViewerUrl(line.trim()));
             loadVideo(tweetUrls[currentVideoIndex]);
         }
 
-        function loadVideo(videoUrl) {
-            const loadingIndicator = document.getElementById('loading-indicator');
-            if (loadingIndicator) loadingIndicator.style.display = 'block';
+        function convertToMediaViewerUrl(url) {
+            const regex = /https:\/\/x\.com\/([^\/]+)\/status\/(\d+).*/;
+            const match = url.match(regex);
+            if (match) {
+                const username = match[1];
+                const tweetId = match[2];
+                return `https://x.com/${username}/status/${tweetId}/mediaViewer?currentTweet=${tweetId}&currentTweetUser=${username}`;
+            }
+            return url; // return original if no match
+        }
 
+        async function loadVideo(tweetUrl) {
             const iframe = document.getElementById('video-iframe');
-            iframe.src = videoUrl;
-            
-            iframe.onload = () => {
-                if (loadingIndicator) loadingIndicator.style.display = 'none';
-            };
+            iframe.src = tweetUrl;
         }
 
         function handleSwipe(event) {
