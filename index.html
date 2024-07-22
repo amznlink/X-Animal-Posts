@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>𝕏 Animal Posts</title>
+    <link rel="preconnect" href="//abs.twimg.com">
+    <link rel="dns-prefetch" href="//abs.twimg.com">
+    <link rel="preconnect" href="//api.twitter.com">
+    <link rel="dns-prefetch" href="//api.twitter.com">
+    <link rel="preconnect" href="//api.x.com">
+    <link rel="dns-prefetch" href="//api.x.com">
+    <link rel="preconnect" href="//pbs.twimg.com">
+    <link rel="dns-prefetch" href="//pbs.twimg.com">
+    <link rel="preconnect" href="//t.co">
+    <link rel="dns-prefetch" href="//t.co">
+    <link rel="preconnect" href="//video.twimg.com">
+    <link rel="dns-prefetch" href="//video.twimg.com">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Twitter">
+    <meta name="apple-mobile-web-app-status-bar-style" content="white">
+    <meta name="theme-color" content="#FFFFFF">
     <style>
         body, html {
             height: 100%;
@@ -17,7 +33,7 @@
             overflow: hidden;
         }
 
-        #video-container {
+        #tweet-container {
             position: relative;
             width: 100%;
             height: 100vh;
@@ -25,6 +41,7 @@
             justify-content: center;
             align-items: center;
             background-color: black;
+            overflow: hidden;
         }
 
         #loading-indicator {
@@ -34,15 +51,16 @@
             transform: translate(-50%, -50%);
             font-size: 24px;
             display: none;
+            color: white;
         }
     </style>
 </head>
 <body>
-    <div id="video-container">
-        <div id="tweet-container"></div>
+    <div id="tweet-container">
         <div id="loading-indicator">Loading...</div>
     </div>
 
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script>
         let currentTweetIndex = 0;
         let tweetUrls = [];
@@ -59,7 +77,7 @@
             const loadingIndicator = document.getElementById('loading-indicator');
             const tweetContainer = document.getElementById('tweet-container');
 
-            if (loadingIndicator) loadingIndicator.style.display = 'block';
+            loadingIndicator.style.display = 'block';
             tweetContainer.innerHTML = ''; // Clear previous content
 
             try {
@@ -70,26 +88,22 @@
 
                 tweetContainer.innerHTML = htmlString;
 
-                // Load Twitter widget script
-                twttr.widgets.load(tweetContainer);
+                if (window.twttr && window.twttr.widgets) {
+                    window.twttr.widgets.load(tweetContainer);
+                }
 
-                // Try to focus the iframe to trigger autoplay
                 setTimeout(() => {
                     const iframe = tweetContainer.querySelector('iframe');
                     if (iframe) {
-                        iframe.focus();
-                        iframe.contentWindow.postMessage({
-                            method: 'play'
-                        }, '*');
+                        iframe.contentWindow.postMessage({ method: 'play' }, '*');
                     }
                 }, 1000);
 
-                currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
+                currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length;
             } catch (error) {
                 console.error('Error loading tweet:', error);
-                // You can also display an error message to the user here
             } finally {
-                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                loadingIndicator.style.display = 'none';
             }
         }
 
@@ -103,9 +117,8 @@
         }
 
         document.addEventListener('DOMContentLoaded', fetchCSV);
-        document.getElementById('video-container').addEventListener('wheel', handleSwipe);
-        document.getElementById('video-container').addEventListener('click', loadTweet);
+        document.getElementById('tweet-container').addEventListener('wheel', handleSwipe);
+        document.getElementById('tweet-container').addEventListener('click', loadTweet);
     </script>
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </body>
 </html>
