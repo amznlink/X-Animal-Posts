@@ -27,14 +27,6 @@
             background-color: black;
         }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            object-fit: cover;
-            object-position: center;
-        }
-
         #loading-indicator {
             position: absolute;
             top: 50%;
@@ -47,7 +39,6 @@
 </head>
 <body>
     <div id="video-container">
-        <iframe id="video-iframe" allow="autoplay; fullscreen"></iframe>
         <div id="loading-indicator">Loading...</div>
     </div>
 
@@ -74,33 +65,18 @@
             return url; // return original if no match
         }
 
-        async function loadVideo(tweetUrl) {
+        function loadVideo(tweetUrl) {
             const loadingIndicator = document.getElementById('loading-indicator');
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
-                const videoUrl = await extractVideoUrl(tweetUrl);
-                const iframe = document.getElementById('video-iframe');
-                iframe.src = videoUrl;
+                window.location.href = tweetUrl;
             } catch (error) {
                 console.error('Error loading video:', error);
                 // You can also display an error message to the user here
             } finally {
                 if (loadingIndicator) loadingIndicator.style.display = 'none';
             }
-        }
-
-        async function extractVideoUrl(tweetUrl) {
-            const response = await fetch(tweetUrl);
-            const text = await response.text();
-
-            // Improved RegEx to capture various video formats (might still need adjustments)
-            const videoUrlMatch = text.match(/https:\/\/video\.twimg\.com\/[^"]+/);
-            if (videoUrlMatch && videoUrlMatch[0]) {
-                return videoUrlMatch[0];
-            }
-
-            throw new Error('Video URL not found');
         }
 
         function handleSwipe(event) {
@@ -112,19 +88,7 @@
             loadVideo(tweetUrls[currentVideoIndex]);
         }
 
-        function resizeIframe() {
-            const iframe = document.getElementById('video-iframe');
-            iframe.style.width = window.innerWidth + 'px';
-            iframe.style.height = window.innerHeight + 'px';
-        }
-
-        window.addEventListener('resize', resizeIframe);
-
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchCSV();
-            resizeIframe();
-        });
-
+        document.addEventListener('DOMContentLoaded', fetchCSV);
         document.getElementById('video-container').addEventListener('wheel', handleSwipe);
     </script>
 </body>
