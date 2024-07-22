@@ -54,12 +54,10 @@
         }
 
         async function extractVideoUrl(tweetUrl) {
-            // Fetch the oEmbed data from Twitter
             const oEmbedResponse = await fetch(`https://publish.twitter.com/oembed?url=${tweetUrl}&hide_thread=true&hide_media=false`);
             const oEmbedData = await oEmbedResponse.json();
             const htmlString = oEmbedData.html;
 
-            // Extract the video URL from the oEmbed HTML
             const videoUrlMatch = htmlString.match(/src="([^"]+)"/);
             if (videoUrlMatch && videoUrlMatch[1]) {
                 return videoUrlMatch[1];
@@ -73,7 +71,6 @@
                 const videoUrl = await extractVideoUrl(tweetUrl);
                 const iframe = document.getElementById('video-iframe');
                 iframe.src = videoUrl;
-                resizeIframe();
             } catch (error) {
                 console.error('Error loading video:', error);
             }
@@ -81,10 +78,8 @@
 
         function handleSwipe(event) {
             if (event.deltaY > 0) {
-                // Swipe down or scroll down
                 currentVideoIndex = (currentVideoIndex + 1) % tweetUrls.length;
             } else {
-                // Swipe up or scroll up
                 currentVideoIndex = (currentVideoIndex - 1 + tweetUrls.length) % tweetUrls.length;
             }
             loadVideo(tweetUrls[currentVideoIndex]);
