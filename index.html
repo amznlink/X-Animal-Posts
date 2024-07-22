@@ -57,14 +57,10 @@
             return lines.map(line => line.trim());
         }
 
-        function createTweetEmbed(tweetUrl) {
+        function createTweetEmbed(tweetHtml) {
             const wrapper = document.createElement('div');
             wrapper.className = 'tweet-wrapper';
-            wrapper.innerHTML = `
-                <blockquote class="twitter-tweet">
-                    <a href="${tweetUrl}"></a>
-                </blockquote>
-            `;
+            wrapper.innerHTML = tweetHtml;
             return wrapper;
         }
 
@@ -82,7 +78,10 @@
             setTimeout(() => {
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
-                        const iframe = entry.target.querySelector('iframe');
+                        const tweetWrapper = entry.target;
+                        const shadowRoot = tweetWrapper.shadowRoot || tweetWrapper.attachShadow({ mode: 'open' });
+                        const iframe = shadowRoot.querySelector('iframe');
+                        
                         if (iframe) {
                             if (entry.isIntersecting) {
                                 iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
