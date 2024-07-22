@@ -70,16 +70,19 @@
 
                 tweetContainer.innerHTML = htmlString;
 
-                // Attempt to simulate a click on the video
+                // Load Twitter widget script
+                twttr.widgets.load(tweetContainer);
+
+                // Try to focus the iframe to trigger autoplay
                 setTimeout(() => {
-                    const tweetIFrame = tweetContainer.querySelector('iframe');
-                    if (tweetIFrame) {
-                        const videoElement = tweetIFrame.contentWindow.document.querySelector('video');
-                        if (videoElement) {
-                            videoElement.play();
-                        }
+                    const iframe = tweetContainer.querySelector('iframe');
+                    if (iframe) {
+                        iframe.focus();
+                        iframe.contentWindow.postMessage({
+                            method: 'play'
+                        }, '*');
                     }
-                }, 2000); // Adjust the timeout as necessary
+                }, 1000);
 
                 currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
             } catch (error) {
@@ -103,5 +106,6 @@
         document.getElementById('video-container').addEventListener('wheel', handleSwipe);
         document.getElementById('video-container').addEventListener('click', loadTweet);
     </script>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 </body>
 </html>
