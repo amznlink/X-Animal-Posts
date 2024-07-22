@@ -96,9 +96,9 @@
             const text = await response.text();
 
             // Improved RegEx to capture various video formats (might still need adjustments)
-            const videoUrlMatch = text.match(/href="([^"]+\.(mp4|webm|ogg))"/);
-            if (videoUrlMatch && videoUrlMatch[1]) {
-                return videoUrlMatch[1];
+            const videoUrlMatch = text.match(/https:\/\/video\.twimg\.com\/[^"]+/);
+            if (videoUrlMatch && videoUrlMatch[0]) {
+                return videoUrlMatch[0];
             }
 
             throw new Error('Video URL not found');
