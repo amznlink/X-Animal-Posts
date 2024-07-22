@@ -31,7 +31,6 @@
     <div id="loading-indicator">Loading...</div>
 
     <script>
-        let currentTweetIndex = 0;
         let tweetUrls = [];
 
         async function fetchCSV() {
@@ -60,18 +59,18 @@
             try {
                 if (tweetUrls.length === 0) throw new Error('No tweet URLs found');
 
-                const firstTweet = tweetUrls[0];
-                let finalUrl = `https://x.com/${firstTweet.username}/status/${firstTweet.tweetId}/mediaviewer?currenttweet=${firstTweet.tweetId}&currenttweetuser=${firstTweet.username}`;
+                const baseTweet = tweetUrls[0];
+                let finalUrl = `https://x.com/${baseTweet.username}/status/${baseTweet.tweetId}/mediaViewer?`;
 
                 tweetUrls.forEach((tweet, index) => {
                     if (index > 0) {
-                        finalUrl += `&currenttweet=${tweet.tweetId}&currenttweetuser=${tweet.username}`;
+                        finalUrl += `currentTweet=${tweet.tweetId}&currentTweetUser=${tweet.username}&`;
                     }
                 });
 
-                window.location.href = finalUrl; // Redirect the web view to the constructed URL
+                finalUrl += `currentTweet=${baseTweet.tweetId}&currentTweetUser=${baseTweet.username}`;
 
-                currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
+                window.location.href = finalUrl; // Redirect the web view to the constructed URL
             } catch (error) {
                 console.error('Error loading media viewer:', error);
                 // You can also display an error message to the user here
