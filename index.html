@@ -38,7 +38,9 @@
             const text = await response.text();
             const lines = text.split('\n').filter(line => line.trim() !== '');
             tweetUrls = lines.map(line => convertToMediaViewerUrl(line.trim()));
-            loadMediaViewer();
+            if (tweetUrls.length > 0) {
+                loadMediaViewer(tweetUrls);
+            }
         }
 
         function convertToMediaViewerUrl(url) {
@@ -47,30 +49,31 @@
             if (match) {
                 const username = match[1];
                 const tweetId = match[2];
-                return { username, tweetId };
+                return `currentTweet=${tweetId}&currentTweetUser=${username}`;
             }
-            return null;
+            return ''; // return empty string if no match
         }
 
-        function loadMediaViewer() {
+        function loadMediaViewer(tweetUrls) {
             const loadingIndicator = document.getElementById('loading-indicator');
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
-                if (tweetUrls.length === 0) throw new Error('No tweet URLs found');
+                const baseUrlMatch = tweetUrls[0].match(/currentTweet=(\d+)&currentTweetUser=([^&]+)/);
+                if (baseUrlMatch) {
+                    const tweetId = baseUrlMatch[1];
+                    const username = baseUrlMatch[2];
+                    let combinedUrl = `https://x.com/${username}/status/${tweetId}/mediaViewer?`;
 
-                const baseTweet = tweetUrls[0];
-                let finalUrl = `https://x.com/${baseTweet.username}/status/${baseTweet.tweetId}/mediaViewer?`;
+                    tweetUrls.forEach(tweet => {
+                        combinedUrl += tweet + '&';
+                    });
 
-                tweetUrls.forEach((tweet, index) => {
-                    if (index > 0) {
-                        finalUrl += `currentTweet=${tweet.tweetId}&currentTweetUser=${tweet.username}&`;
-                    }
-                });
-
-                finalUrl += `currentTweet=${baseTweet.tweetId}&currentTweetUser=${baseTweet.username}`;
-
-                window.location.href = finalUrl; // Redirect the web view to the constructed URL
+                    combinedUrl = combinedUrl.slice(0, -1); // Remove the trailing '&'
+                    window.location.href = combinedUrl; // Redirect the web view to the constructed URL
+                } else {
+                    throw new Error('Base URL could not be constructed');
+                }
             } catch (error) {
                 console.error('Error loading media viewer:', error);
                 // You can also display an error message to the user here
