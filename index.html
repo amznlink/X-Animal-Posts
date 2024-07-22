@@ -52,7 +52,6 @@
     </div>
 
     <script>
-        const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
         let currentVideoIndex = 0;
         let tweetUrls = [];
 
@@ -80,7 +79,7 @@
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
-                const videoUrl = await extractVideoUrl(proxyUrl + tweetUrl);
+                const videoUrl = await extractVideoUrl(tweetUrl);
                 const iframe = document.getElementById('video-iframe');
                 iframe.src = videoUrl;
             } catch (error) {
