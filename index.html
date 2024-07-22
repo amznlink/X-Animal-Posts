@@ -40,6 +40,14 @@
             width: 100%;
             height: 100%;
         }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -75,13 +83,16 @@
             setTimeout(() => {
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
-                        const shadowRoot = entry.target.shadowRoot || entry.target.attachShadow({mode: 'open'});
-                        const iframe = shadowRoot.querySelector('iframe');
+                        const iframe = entry.target.querySelector('iframe');
                         if (iframe) {
                             if (entry.isIntersecting) {
-                                iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                                iframe.contentWindow.postMessage({
+                                    command: 'playVideo'
+                                }, '*');
                             } else {
-                                iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                                iframe.contentWindow.postMessage({
+                                    command: 'pauseVideo'
+                                }, '*');
                             }
                         }
                     });
@@ -90,7 +101,7 @@
                 document.querySelectorAll('.tweet-wrapper').forEach(wrapper => {
                     observer.observe(wrapper);
                 });
-            }, 3000);
+            }, 3000); // Adjust the timeout as needed to ensure the widgets have loaded
         }
 
         document.addEventListener('DOMContentLoaded', initialize);
