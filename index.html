@@ -69,12 +69,12 @@
             const tweetUrls = await fetchCSV();
             const tweetContainer = document.getElementById('tweet-container');
 
-            tweetUrls.forEach(tweetUrl => {
-                const tweetEmbed = createTweetEmbed(tweetUrl);
-                tweetContainer.appendChild(tweetEmbed);
-            });
+            for (const tweetUrl of tweetUrls) {
+                const tweetWrapper = createTweetEmbed(tweetUrl);
+                tweetContainer.appendChild(tweetWrapper);
+            }
 
-            twttr.widgets.load();  // Initialize Twitter widgets
+            twttr.widgets.load();
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
