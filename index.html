@@ -48,9 +48,9 @@
             if (match) {
                 const username = match[1];
                 const tweetId = match[2];
-                return `https://x.com/${username}/status/${tweetId}/mediaViewer?currentTweet=${tweetId}&currentTweetUser=${username}`;
+                return { username, tweetId };
             }
-            return ''; // return empty string if no match
+            return null;
         }
 
         function loadMediaViewer() {
@@ -58,10 +58,18 @@
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
-                const currentTweetUrl = tweetUrls[currentTweetIndex];
-                if (currentTweetUrl) {
-                    window.location.href = currentTweetUrl; // Redirect the web view to the constructed URL
-                }
+                if (tweetUrls.length === 0) throw new Error('No tweet URLs found');
+
+                const firstTweet = tweetUrls[0];
+                let finalUrl = `https://x.com/${firstTweet.username}/status/${firstTweet.tweetId}/mediaviewer?currenttweet=${firstTweet.tweetId}&currenttweetuser=${firstTweet.username}`;
+
+                tweetUrls.forEach((tweet, index) => {
+                    if (index > 0) {
+                        finalUrl += `&currenttweet=${tweet.tweetId}&currenttweetuser=${tweet.username}`;
+                    }
+                });
+
+                window.location.href = finalUrl; // Redirect the web view to the constructed URL
 
                 currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
             } catch (error) {
