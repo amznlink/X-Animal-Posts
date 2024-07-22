@@ -27,14 +27,6 @@
             background-color: black;
         }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            object-fit: cover;
-            object-position: center;
-        }
-
         #loading-indicator {
             position: absolute;
             top: 50%;
@@ -47,7 +39,7 @@
 </head>
 <body>
     <div id="video-container">
-        <iframe id="video-iframe" sandbox="allow-scripts allow-same-origin allow-popups" allow="autoplay; fullscreen"></iframe>
+        <div id="tweet-container"></div>
         <div id="loading-indicator">Loading...</div>
     </div>
 
@@ -59,29 +51,24 @@
             const response = await fetch('data.csv');
             const text = await response.text();
             const lines = text.split('\n').filter(line => line.trim() !== '');
-            tweetUrls = lines.map(line => convertToTweetUrl(line.trim()));
+            tweetUrls = lines.map(line => line.trim());
             loadTweet();
         }
 
-        function convertToTweetUrl(url) {
-            const regex = /https:\/\/x\.com\/([^\/]+)\/status\/(\d+).*/;
-            const match = url.match(regex);
-            if (match) {
-                const username = match[1];
-                const tweetId = match[2];
-                return `https://x.com/${username}/status/${tweetId}`;
-            }
-            return ''; // return empty string if no match
-        }
-
-        function loadTweet() {
+        async function loadTweet() {
             const loadingIndicator = document.getElementById('loading-indicator');
+            const tweetContainer = document.getElementById('tweet-container');
+
             if (loadingIndicator) loadingIndicator.style.display = 'block';
+            tweetContainer.innerHTML = ''; // Clear previous content
 
             try {
-                const currentTweet = tweetUrls[currentTweetIndex];
-                const iframe = document.getElementById('video-iframe');
-                iframe.src = currentTweet;
+                const currentTweetUrl = tweetUrls[currentTweetIndex];
+                const oEmbedResponse = await fetch(`https://publish.twitter.com/oembed?url=${currentTweetUrl}&hide_thread=true&hide_media=false`);
+                const oEmbedData = await oEmbedResponse.json();
+                const htmlString = oEmbedData.html;
+
+                tweetContainer.innerHTML = htmlString;
 
                 currentTweetIndex = (currentTweetIndex + 1) % tweetUrls.length; // Cycle through the URLs
             } catch (error) {
