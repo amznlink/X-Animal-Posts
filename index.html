@@ -55,7 +55,7 @@
 
         async function extractVideoUrl(tweetUrl) {
             // Fetch the oEmbed data from Twitter
-            const oEmbedResponse = await fetch(`https://publish.twitter.com/oembed?url=${tweetUrl}`);
+            const oEmbedResponse = await fetch(`https://publish.twitter.com/oembed?url=${tweetUrl}&hide_thread=true&hide_media=false`);
             const oEmbedData = await oEmbedResponse.json();
             const htmlString = oEmbedData.html;
 
@@ -73,6 +73,7 @@
                 const videoUrl = await extractVideoUrl(tweetUrl);
                 const iframe = document.getElementById('video-iframe');
                 iframe.src = videoUrl;
+                resizeIframe();
             } catch (error) {
                 console.error('Error loading video:', error);
             }
@@ -89,7 +90,19 @@
             loadVideo(tweetUrls[currentVideoIndex]);
         }
 
-        document.addEventListener('DOMContentLoaded', fetchCSV);
+        function resizeIframe() {
+            const iframe = document.getElementById('video-iframe');
+            iframe.style.width = window.innerWidth + 'px';
+            iframe.style.height = window.innerHeight + 'px';
+        }
+
+        window.addEventListener('resize', resizeIframe);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchCSV();
+            resizeIframe();
+        });
+
         document.getElementById('video-container').addEventListener('wheel', handleSwipe);
     </script>
 </body>
