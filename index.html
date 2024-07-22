@@ -36,12 +36,9 @@
             background-color: black;
         }
 
-        iframe {
+        blockquote.twitter-tweet {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            object-position: center;
-            border: none;
         }
     </style>
 </head>
@@ -78,10 +75,8 @@
             setTimeout(() => {
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
-                        const tweetWrapper = entry.target;
-                        const shadowRoot = tweetWrapper.shadowRoot || tweetWrapper.attachShadow({ mode: 'open' });
+                        const shadowRoot = entry.target.shadowRoot || entry.target.attachShadow({mode: 'open'});
                         const iframe = shadowRoot.querySelector('iframe');
-                        
                         if (iframe) {
                             if (entry.isIntersecting) {
                                 iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
@@ -95,7 +90,7 @@
                 document.querySelectorAll('.tweet-wrapper').forEach(wrapper => {
                     observer.observe(wrapper);
                 });
-            }, 3000); // Adjust the timeout as needed to ensure the widgets have loaded
+            }, 3000);
         }
 
         document.addEventListener('DOMContentLoaded', initialize);
