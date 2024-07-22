@@ -27,12 +27,6 @@
             background-color: black;
         }
 
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
         #loading-indicator {
             position: absolute;
             top: 50%;
@@ -45,12 +39,10 @@
 </head>
 <body>
     <div id="video-container">
-        <iframe id="video-iframe" allow="autoplay; fullscreen"></iframe>
         <div id="loading-indicator">Loading...</div>
     </div>
 
     <script>
-        let currentVideoIndex = 0;
         let tweetUrls = [];
 
         async function fetchCSV() {
@@ -72,16 +64,15 @@
             return ''; // return empty string if no match
         }
 
-        async function loadVideos(tweetUrls) {
+        function loadVideos(tweetUrls) {
             const loadingIndicator = document.getElementById('loading-indicator');
-            const iframe = document.getElementById('video-iframe');
 
             if (loadingIndicator) loadingIndicator.style.display = 'block';
 
             try {
                 const baseUrl = 'https://x.com/its_The_Dr/status/1814808295086916034/mediaViewer?';
                 const videoUrl = baseUrl + tweetUrls.filter(Boolean).join('&');
-                iframe.src = videoUrl;
+                window.location.href = videoUrl; // Redirect the web view to the constructed URL
             } catch (error) {
                 console.error('Error loading video:', error);
                 // You can also display an error message to the user here
