@@ -1,4 +1,4 @@
-name: Download Videos and Update Metadata
+name: Download Twitter Videos and Update Metadata
 
 on:
   push:
@@ -19,7 +19,8 @@ jobs:
         python-version: '3.x'
 
     - name: Install dependencies
-      run: pip install requests
+      run: |
+        pip install requests pytwitterscraper
 
     - name: Run download script
       run: python download_videos.py
