@@ -24,12 +24,11 @@ jobs:
     - name: Install js-yaml
       run: npm install js-yaml
 
-    - name: Update videos.yaml
+    - name: Create and update videos.yaml
       run: |
         node -e "
         const fs = require('fs');
         const yaml = require('js-yaml');
-        const path = require('path');
 
         const videoDir = './';
         const yamlFile = 'videos.yaml';
@@ -37,14 +36,7 @@ jobs:
         const videos = fs.readdirSync(videoDir)
           .filter(file => file.endsWith('.mp4'));
 
-        let doc = {};
-        try {
-          doc = yaml.load(fs.readFileSync(yamlFile, 'utf8'));
-        } catch (e) {
-          console.log(e);
-        }
-
-        doc.videos = videos;
+        let doc = { videos };
 
         fs.writeFileSync(yamlFile, yaml.dump(doc));
         "
@@ -56,6 +48,5 @@ jobs:
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git add videos.yaml
-        git commit -m 'Update videos.yaml with new videos'
+        git commit -m 'Create or update videos.yaml with new videos'
         git push https://x-access-token:${{ secrets.PERSONAL_ACCESS_TOKEN }}@github.com/${{ github.repository }}.git
-        
