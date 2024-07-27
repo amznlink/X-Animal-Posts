@@ -82,7 +82,7 @@ def generate_index():
             });
 
             if (closestVideo) {
-                closestVideo.scrollIntoView({ behavior: 'auto', block: 'start' });
+                closestVideo.scrollIntoView({ behavior: 'fast', block: 'start' });
             }
         });
 
