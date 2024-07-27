@@ -52,38 +52,46 @@ def generate_index():
             const videos = videoContainer.getElementsByTagName("video");
 
             Array.from(videos).forEach(videoElement => {
-                // Add event listener for playing video when in view
-                const observer = new IntersectionObserver(entries => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            videoElement.play();
-                        } else {
-                            videoElement.pause();
+                videoElement.addEventListener('play', () => {
+                    Array.from(videos).forEach(v => {
+                        if (v !== videoElement) {
+                            v.pause();
                         }
                     });
-                }, { threshold: 0.75 });
-                observer.observe(videoElement);
+                });
             });
         });
 
-        window.addEventListener('scroll', function() {
-            const videos = document.querySelectorAll('video');
-            let closestVideo = null;
-            let closestDistance = Infinity;
-
-            videos.forEach(video => {
-                const rect = video.getBoundingClientRect();
-                const distance = Math.abs(rect.top);
-
-                if (distance < closestDistance) {
-                    closestVideo = video;
-                    closestDistance = distance;
-                }
-            });
-
-            if (closestVideo) {
-                closestVideo.scrollIntoView({ behavior: 'auto', block: 'start' });
+        window.addEventListener('wheel', function(event) {
+            if (event.deltaY > 0) {
+                scrollToNext();
+            } else if (event.deltaY < 0) {
+                scrollToPrevious();
             }
+        });
+
+        function scrollToNext() {
+            const currentVideo = document.querySelector('video[autoplay]');
+            if (currentVideo && currentVideo.nextElementSibling) {
+                currentVideo.nextElementSibling.scrollIntoView({ behavior: 'auto' });
+            } else if (!currentVideo && videos.length > 0) {
+                videos[0].scrollIntoView({ behavior: 'auto' });
+            }
+        }
+
+        function scrollToPrevious() {
+            const currentVideo = document.querySelector('video[autoplay]');
+            if (currentVideo && currentVideo.previousElementSibling) {
+                currentVideo.previousElementSibling.scrollIntoView({ behavior: 'auto' });
+            }
+        }
+
+        const videos = document.querySelectorAll('video');
+        videos.forEach(video => {
+            video.addEventListener('play', () => {
+                videos.forEach(v => v.removeAttribute('autoplay'));
+                video.setAttribute('autoplay', 'true');
+            });
         });
     </script>
 </body>
