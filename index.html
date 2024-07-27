@@ -3,13 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animals</title>
+    <title>Animal Videos</title>
     <style>
         body {
             margin: 0;
             padding: 0;
             overflow-x: hidden;
             font-family: Arial, sans-serif;
+            scroll-snap-type: y mandatory;
+            height: 100vh;
+            overflow-y: scroll;
         }
 
         #video-container {
@@ -22,7 +25,10 @@
         video {
             width: 100%;
             max-width: 800px;
-            border: 1px solid #ccc;
+            height: 100vh;
+            object-fit: cover;
+            scroll-snap-align: start;
+            border: none;
         }
 
         video.fullscreen {
@@ -47,30 +53,21 @@
                             const videoElement = document.createElement('video');
                             videoElement.src = `videos/${video}`;
                             videoElement.controls = true;
-                            videoElement.addEventListener('click', () => {
-                                videoElement.classList.toggle('fullscreen');
-                            });
                             videoContainer.appendChild(videoElement);
 
                             // Add event listener for playing video when in view
-                            videoElement.addEventListener('play', () => {
-                                document.querySelectorAll('video').forEach(v => {
-                                    if (v !== videoElement) {
-                                        v.pause();
-                                    }
-                                });
-                            });
-
-                            // Play video when it comes into view
                             const observer = new IntersectionObserver(entries => {
                                 entries.forEach(entry => {
                                     if (entry.isIntersecting) {
                                         videoElement.play();
+                                        videoElement.classList.add('fullscreen');
                                     } else {
                                         videoElement.pause();
+                                        videoElement.classList.remove('fullscreen');
                                     }
                                 });
-                            });
+                            }, { threshold: 0.5 });
+
                             observer.observe(videoElement);
                         });
                     });
@@ -78,6 +75,30 @@
 
             loadVideos();
         });
+
+        // Ensure scrolling goes to next video in list
+        window.addEventListener('wheel', function(event) {
+            const delta = Math.sign(event.deltaY);
+            if (delta > 0) {
+                scrollToNext();
+            } else if (delta < 0) {
+                scrollToPrevious();
+            }
+        });
+
+        function scrollToNext() {
+            const currentVideo = document.querySelector('video.fullscreen');
+            if (currentVideo && currentVideo.nextElementSibling) {
+                currentVideo.nextElementSibling.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function scrollToPrevious() {
+            const currentVideo = document.querySelector('video.fullscreen');
+            if (currentVideo && currentVideo.previousElementSibling) {
+                currentVideo.previousElementSibling.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
     </script>
 </body>
 </html>
