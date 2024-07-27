@@ -1,10 +1,14 @@
-import os
+import csv
 
 def generate_index():
-    videos_folder = 'videos'
-    video_extensions = ('.mp4', '.mov', '.avi', '.mkv')
-    video_files = [f for f in os.listdir(videos_folder) if f.endswith(video_extensions)]
-    
+    csv_file = 'data.csv'
+    video_urls = []
+
+    with open(csv_file, newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            video_urls.append(row[0])
+
     with open('index.html', 'w') as f:
         f.write("""<!DOCTYPE html>
 <html lang="en">
@@ -28,10 +32,9 @@ def generate_index():
             align-items: center;
             scroll-snap-type: y mandatory;
         }
-        video {
+        iframe {
             width: 100%;
             height: 100vh;
-            object-fit: cover;
             scroll-snap-align: start;
             border: none;
         }
@@ -40,30 +43,17 @@ def generate_index():
 <body>
     <div id="video-container">""")
 
-        for video in video_files:
+        for url in video_urls:
+            embed_url = f"https://twitframe.com/show?url={url}"
             f.write(f"""
-        <video src="videos/{video}" controls></video>""")
+        <iframe src="{embed_url}" allowfullscreen></iframe>""")
 
         f.write("""
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const videoContainer = document.getElementById("video-container");
-            const videos = videoContainer.getElementsByTagName("video");
-
-            Array.from(videos).forEach(videoElement => {
-                // Add event listener for playing video when in view
-                const observer = new IntersectionObserver(entries => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            videoElement.play();
-                        } else {
-                            videoElement.pause();
-                        }
-                    });
-                }, { threshold: 0.75 });
-                observer.observe(videoElement);
-            });
+            const iframes = videoContainer.getElementsByTagName("iframe");
 
             let startY = 0;
             let endY = 0;
@@ -78,32 +68,31 @@ def generate_index():
             });
 
             function handleTouchScroll() {
-                const videos = document.querySelectorAll('video');
-                let closestVideo = null;
+                let closestIframe = null;
                 let closestDistance = Infinity;
 
-                videos.forEach(video => {
-                    const rect = video.getBoundingClientRect();
+                Array.from(iframes).forEach(iframe => {
+                    const rect = iframe.getBoundingClientRect();
                     const distance = Math.abs(rect.top);
 
                     if (distance < closestDistance) {
-                        closestVideo = video;
+                        closestIframe = iframe;
                         closestDistance = distance;
                     }
                 });
 
-                if (closestVideo) {
+                if (closestIframe) {
                     if (startY > endY) {
                         // Scroll down
-                        const nextVideo = closestVideo.nextElementSibling;
-                        if (nextVideo) {
-                            nextVideo.scrollIntoView({ block: 'start' });
+                        const nextIframe = closestIframe.nextElementSibling;
+                        if (nextIframe) {
+                            nextIframe.scrollIntoView({ block: 'start' });
                         }
                     } else {
                         // Scroll up
-                        const previousVideo = closestVideo.previousElementSibling;
-                        if (previousVideo) {
-                            previousVideo.scrollIntoView({ block: 'start' });
+                        const previousIframe = closestIframe.previousElementSibling;
+                        if (previousIframe) {
+                            previousIframe.scrollIntoView({ block: 'start' });
                         }
                     }
                 }
