@@ -11,7 +11,7 @@ def generate_index():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animals</title>
+    <title>Animal Videos</title>
     <style>
         body {
             margin: 0;
@@ -26,11 +26,10 @@ def generate_index():
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
+            scroll-snap-type: y mandatory;
         }
         video {
             width: 100%;
-            max-width: 800px;
             height: 100vh;
             object-fit: cover;
             scroll-snap-align: start;
