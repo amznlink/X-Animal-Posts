@@ -3,84 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal Videos</title>
+    <title>Twitter Video Player</title>
     <style>
-        body {
+        html, body {
+            height: 100%;
             margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            font-family: Arial, sans-serif;
-            scroll-snap-type: y mandatory;
-            height: 100vh;
+            overflow: hidden;
+        }
+
+        #video-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
             overflow-y: scroll;
         }
-        #media-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            scroll-snap-type: y mandatory;
-        }
-        .media {
+
+        video {
             width: 100%;
-            height: 100vh;
-            scroll-snap-align: start;
-            border: none;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    <div id="media-container">
-    </div>
+    <div id="video-container"></div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const mediaContainer = document.getElementById("media-container");
-            const mediaElements = mediaContainer.getElementsByClassName("media");
+        const videoContainer = document.getElementById('video-container');
 
-            let startY = 0;
-            let endY = 0;
+        fetch('data.csv')
+          .then(response => response.text())
+          .then(data => {
+            const tweetUrls = data.split('\n').filter(url => url.trim());
 
-            document.addEventListener('touchstart', function(event) {
-                startY = event.touches[0].clientY;
-            });
+            const loadNextVideo = async () => {
+              if (tweetUrls.length === 0) return;
 
-            document.addEventListener('touchend', function(event) {
-                endY = event.changedTouches[0].clientY;
-                handleTouchScroll();
-            });
+              const tweetUrl = tweetUrls.shift();
 
-            function handleTouchScroll() {
-                let closestMedia = null;
-                let closestDistance = Infinity;
+              try {
+                const oembedResponse = await fetch(`https://publish.twitter.com/oembed?url=${tweetUrl}`);
+                const oembedData = await oEmbedResponse.json();
+                const htmlString = oEmbedData.html;
 
-                Array.from(mediaElements).forEach(media => {
-                    const rect = media.getBoundingClientRect();
-                    const distance = Math.abs(rect.top);
+                const videoUrlMatch = htmlString.match(/src="([^"]+)"/);
+                if (videoUrlMatch && videoUrlMatch[1]) {
+                  const videoUrl = videoUrlMatch[1];
 
-                    if (distance < closestDistance) {
-                        closestMedia = media;
-                        closestDistance = distance;
-                    }
-                });
+                  const video = document.createElement('video');
+                  video.src = videoUrl;
+                  video.controls = true;
+                  videoContainer.appendChild(video);
 
-                if (closestMedia) {
-                    if (startY > endY) {
-                        // Scroll down
-                        const nextMedia = closestMedia.nextElementSibling;
-                        if (nextMedia) {
-                            nextMedia.scrollIntoView({ block: 'start' });
-                        }
-                    } else {
-                        // Scroll up
-                        const previousMedia = closestMedia.previousElementSibling;
-                        if (previousMedia) {
-                            previousMedia.scrollIntoView({ block: 'start' });
-                        }
-                    }
+                  video.addEventListener('ended', loadNextVideo);
+                } else {
+                  console.error('Video URL not found in tweet:', tweetUrl);
                 }
-            }
-        });
+              } catch (error) {
+                console.error('Error fetching or processing tweet:', error);
+              }
+            };
 
-        document.documentElement.style.scrollBehavior = 'auto';
+            loadNextVideo();
+          })
+          .catch(error => {
+            console.error('Error fetching video URLs:', error);
+          });
     </script>
 </body>
 </html>
