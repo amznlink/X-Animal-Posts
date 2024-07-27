@@ -35,11 +35,6 @@ def generate_index():
             scroll-snap-align: start;
             border: none;
         }
-        video.fullscreen {
-            width: 100%;
-            height: 100vh;
-            object-fit: cover;
-        }
     </style>
 </head>
 <body>
@@ -62,39 +57,34 @@ def generate_index():
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
                             videoElement.play();
-                            videoElement.classList.add('fullscreen');
                         } else {
                             videoElement.pause();
-                            videoElement.classList.remove('fullscreen');
                         }
                     });
-                }, { threshold: 0.5 });
+                }, { threshold: 0.75 });
                 observer.observe(videoElement);
             });
         });
 
-        window.addEventListener('wheel', function(event) {
-            const delta = Math.sign(event.deltaY);
-            if (delta > 0) {
-                scrollToNext();
-            } else if (delta < 0) {
-                scrollToPrevious();
+        window.addEventListener('scroll', function() {
+            const videos = document.querySelectorAll('video');
+            let closestVideo = null;
+            let closestDistance = Infinity;
+
+            videos.forEach(video => {
+                const rect = video.getBoundingClientRect();
+                const distance = Math.abs(rect.top);
+
+                if (distance < closestDistance) {
+                    closestVideo = video;
+                    closestDistance = distance;
+                }
+            });
+
+            if (closestVideo) {
+                closestVideo.scrollIntoView({ behavior: 'smooth' });
             }
         });
-
-        function scrollToNext() {
-            const currentVideo = document.querySelector('video.fullscreen');
-            if (currentVideo && currentVideo.nextElementSibling) {
-                currentVideo.nextElementSibling.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
-        function scrollToPrevious() {
-            const currentVideo = document.querySelector('video.fullscreen');
-            if (currentVideo && currentVideo.previousElementSibling) {
-                currentVideo.previousElementSibling.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
     </script>
 </body>
 </html>""")
