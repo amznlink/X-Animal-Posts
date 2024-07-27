@@ -11,7 +11,7 @@ def generate_index():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Gallery</title>
+    <title>Animals</title>
     <style>
         body {
             margin: 0;
