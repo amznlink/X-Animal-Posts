@@ -48,17 +48,19 @@ def generate_index():
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const videoContainer = document.getElementById("video-container");
-            const videos = videoContainer.getElementsByTagName("video");
+            const videos = document.querySelectorAll('video');
 
-            Array.from(videos).forEach(videoElement => {
-                videoElement.addEventListener('play', () => {
-                    Array.from(videos).forEach(v => {
-                        if (v !== videoElement) {
-                            v.pause();
+            videos.forEach(video => {
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            video.play();
+                        } else {
+                            video.pause();
                         }
                     });
-                });
+                }, { threshold: 0.75 });
+                observer.observe(video);
             });
         });
 
