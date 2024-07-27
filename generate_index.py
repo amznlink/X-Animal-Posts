@@ -82,17 +82,8 @@ def generate_index():
             });
 
             if (closestVideo) {
-                closestVideo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                closestVideo.scrollIntoView({ behavior: 'auto', block: 'start' });
             }
-        });
-
-        // Override smooth scrolling duration
-        document.documentElement.style.scrollBehavior = 'smooth';
-        window.addEventListener('scroll', () => {
-            clearTimeout(window.scrollTimeout);
-            window.scrollTimeout = setTimeout(() => {
-                document.documentElement.style.scrollBehavior = 'auto';
-            }, 300);
         });
     </script>
 </body>
