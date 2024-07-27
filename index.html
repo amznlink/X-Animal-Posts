@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animal Videos</title>
+    <title>Video Gallery</title>
     <style>
         body {
             margin: 0;
@@ -14,14 +14,12 @@
             height: 100vh;
             overflow-y: scroll;
         }
-
         #video-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
         }
-
         video {
             width: 100%;
             max-width: 800px;
@@ -30,7 +28,6 @@
             scroll-snap-align: start;
             border: none;
         }
-
         video.fullscreen {
             width: 100%;
             height: 100vh;
@@ -39,44 +36,33 @@
     </style>
 </head>
 <body>
-    <div id="video-container"></div>
+    <div id="video-container">
+        <video src="videos/8R-jq7_f5TiYfQWJ.mp4" controls></video>
+        <video src="videos/2txGdJ_bLr1tRDhq.mp4" controls></video>
+        <video src="videos/Hsr-ZhUdZhC9bcea.mp4" controls></video>
+    </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const videoContainer = document.getElementById("video-container");
+            const videos = videoContainer.getElementsByTagName("video");
 
-            // Function to load videos from the videos.json file
-            function loadVideos() {
-                fetch('videos/videos.json')
-                    .then(response => response.json())
-                    .then(videos => {
-                        videos.forEach(video => {
-                            const videoElement = document.createElement('video');
-                            videoElement.src = `videos/${video}`;
-                            videoElement.controls = true;
-                            videoContainer.appendChild(videoElement);
-
-                            // Add event listener for playing video when in view
-                            const observer = new IntersectionObserver(entries => {
-                                entries.forEach(entry => {
-                                    if (entry.isIntersecting) {
-                                        videoElement.play();
-                                        videoElement.classList.add('fullscreen');
-                                    } else {
-                                        videoElement.pause();
-                                        videoElement.classList.remove('fullscreen');
-                                    }
-                                });
-                            }, { threshold: 0.5 });
-
-                            observer.observe(videoElement);
-                        });
+            Array.from(videos).forEach(videoElement => {
+                // Add event listener for playing video when in view
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            videoElement.play();
+                            videoElement.classList.add('fullscreen');
+                        } else {
+                            videoElement.pause();
+                            videoElement.classList.remove('fullscreen');
+                        }
                     });
-            }
-
-            loadVideos();
+                }, { threshold: 0.5 });
+                observer.observe(videoElement);
+            });
         });
 
-        // Ensure scrolling goes to next video in list
         window.addEventListener('wheel', function(event) {
             const delta = Math.sign(event.deltaY);
             if (delta > 0) {
