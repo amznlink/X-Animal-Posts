@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitter Video Player</title>
+    <title>Animals</title>
     <style>
         html, body {
             height: 100%;
@@ -18,9 +18,9 @@
             overflow-y: scroll;
         }
 
-        video {
+        .tweet-embed {
             width: 100%;
-            height: auto;
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -34,38 +34,40 @@
           .then(data => {
             const tweetUrls = data.split('\n').filter(url => url.trim());
 
-            const loadNextVideo = async () => {
+            const loadNextTweet = async () => {
               if (tweetUrls.length === 0) return;
 
               const tweetUrl = tweetUrls.shift();
 
               try {
                 const oembedResponse = await fetch(`https://publish.twitter.com/oembed?url=${tweetUrl}`);
-                const oembedData = await oEmbedResponse.json();
-                const htmlString = oEmbedData.html;
+                const oembedData = await oembedResponse.json();
+                const htmlString = oembedData.html;
 
-                const videoUrlMatch = htmlString.match(/src="([^"]+)"/);
-                if (videoUrlMatch && videoUrlMatch[1]) {
-                  const videoUrl = videoUrlMatch[1];
+                const embedDiv = document.createElement('div');
+                embedDiv.classList.add('tweet-embed');
+                embedDiv.innerHTML = htmlString;
+                videoContainer.appendChild(embedDiv);
 
-                  const video = document.createElement('video');
-                  video.src = videoUrl;
-                  video.controls = true;
-                  videoContainer.appendChild(video);
-
-                  video.addEventListener('ended', loadNextVideo);
+                const iframe = embedDiv.querySelector('iframe');
+                if (iframe) {
+                  iframe.addEventListener('load', () => {
+                    setTimeout(loadNextTweet, 1000);
+                  });
                 } else {
-                  console.error('Video URL not found in tweet:', tweetUrl);
+                  console.error('Tweet embed failed:', tweetUrl);
+                  loadNextTweet();
                 }
               } catch (error) {
                 console.error('Error fetching or processing tweet:', error);
+                loadNextTweet();
               }
             };
 
-            loadNextVideo();
+            loadNextTweet();
           })
           .catch(error => {
-            console.error('Error fetching video URLs:', error);
+            console.error('Error fetching tweet URLs:', error);
           });
     </script>
 </body>
