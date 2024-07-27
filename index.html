@@ -35,24 +35,26 @@
 </head>
 <body>
   <div id="videos"></div>
+
+  <script id="csv-data" type="text/plain">
+    https://x.com/angie_karan/status/1552988462730846208?t=UWUm2mKoM0YktGXDc7MOsQ&s=19
+    https://x.com/Fernand92542445/status/1550540294189420544?t=UWUm2mKoM0YktGXDc7MOsQ&s=19
+    https://x.com/nature_petals/status/1551221034334175232?t=UWUm2mKoM0YktGXDc7MOsQ&s=19
+    https://x.com/JennyPaPB/status/1551287833784205325?t=wcM-EbyrGwt1lqNoDcNTsA&s=19
+  </script>
+
   <script>
-    const csvData = `data.csv`; // Replace with your data.csv file path
+    const csvDataElement = document.getElementById('csv-data');
+    const csvData = csvDataElement.textContent.trim();
     const videosContainer = document.getElementById('videos');
     
-    fetch(csvData)
-      .then(response => response.text())
-      .then(data => {
-        const rows = data.split('\n').filter(row => row.trim() !== ''); // Remove empty lines
-        rows.forEach((row, index) => {
-          if (index > 0) {
-            const columns = row.split(',').map(col => col.trim());
-            const videoUrl = columns[0];
-            if (videoUrl) {
-              createIframe(videoUrl);
-            }
-          }
-        });
-      });
+    const rows = csvData.split('\n').filter(row => row.trim() !== ''); // Remove empty lines
+    rows.forEach((row) => {
+      const videoUrl = row.trim();
+      if (videoUrl) {
+        createIframe(videoUrl);
+      }
+    });
     
     function createIframe(url) {
       const iframeContainer = document.createElement('div');
