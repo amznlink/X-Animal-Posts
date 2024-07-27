@@ -3,18 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animals</title>
+  <title>Twitter Video Gallery</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       background-color: #f2f2f2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     
     .video-container {
       position: relative;
-      width: 100vw;
-      height: 100vh;
+      width: 90%; /* Adjust the width as needed */
+      margin: 20px 0;
+      padding-bottom: 56.25%; /* 16:9 aspect ratio */
+      height: 0;
       overflow: hidden;
     }
     
@@ -26,44 +31,13 @@
       height: 100%;
       border: none;
     }
-    
-    .video-container .video-controls {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1;
-    }
-    
-    .video-container .video-controls button {
-      background-color: #fff;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    
-    .video-container .video-controls button:hover {
-      background-color: #ddd;
-    }
   </style>
 </head>
 <body>
-  <div class="video-container">
-    <iframe id="twitter-video" src="" frameborder="0" allowfullscreen crossorigin="anonymous"></iframe>
-    <div class="video-controls">
-      <button id="prev-video">Previous</button>
-      <button id="next-video">Next</button>
-    </div>
-  </div>
+  <div id="videos"></div>
   <script>
     const csvData = `data.csv`; // Replace with your data.csv file path
-    const videoContainer = document.getElementById('twitter-video');
-    const prevButton = document.getElementById('prev-video');
-    const nextButton = document.getElementById('next-video');
-    
-    let videos = [];
-    let currentVideoIndex = 0;
+    const videosContainer = document.getElementById('videos');
     
     fetch(csvData)
       .then(response => response.text())
@@ -74,38 +48,22 @@
             const columns = row.split(',').map(col => col.trim());
             const videoUrl = columns[0];
             if (videoUrl) {
-              videos.push({ url: videoUrl, index });
+              createIframe(videoUrl);
             }
           }
         });
-        
-        // Load the first video if available
-        if (videos.length > 0) {
-          loadVideo(videos[0].url);
-        }
-        
-        // Bind event listeners
-        prevButton.addEventListener('click', prevVideo);
-        nextButton.addEventListener('click', nextVideo);
       });
     
-    function loadVideo(url) {
-      videoContainer.src = url;
-      videoContainer.style.display = 'block';
-    }
-    
-    function prevVideo() {
-      if (currentVideoIndex > 0) {
-        currentVideoIndex--;
-        loadVideo(videos[currentVideoIndex].url);
-      }
-    }
-    
-    function nextVideo() {
-      if (currentVideoIndex < videos.length - 1) {
-        currentVideoIndex++;
-        loadVideo(videos[currentVideoIndex].url);
-      }
+    function createIframe(url) {
+      const iframeContainer = document.createElement('div');
+      iframeContainer.classList.add('video-container');
+      
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.allowFullscreen = true;
+      
+      iframeContainer.appendChild(iframe);
+      videosContainer.appendChild(iframeContainer);
     }
   </script>
 </body>
