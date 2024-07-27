@@ -14,13 +14,13 @@
             height: 100vh;
             overflow-y: scroll;
         }
-        #video-container {
+        #tweet-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             scroll-snap-type: y mandatory;
         }
-        iframe {
+        .tweet {
             width: 100%;
             height: 100vh;
             scroll-snap-align: start;
@@ -29,15 +29,25 @@
     </style>
 </head>
 <body>
-    <div id="video-container">
-        <iframe src="https://twitframe.com/show?url=https://x.com/hussain_tarana/status/1815194875148816467?t=lkhknOFPOLXJEidIUo8rUA&s=19" allowfullscreen></iframe>
-        <iframe src="https://twitframe.com/show?url=https://x.com/xForNature/status/1817130412075839515?t=lkhknOFPOLXJEidIUo8rUA&s=19" allowfullscreen></iframe>
-        <iframe src="https://twitframe.com/show?url=https://x.com/hussain_tarana/status/1817029776173109437?t=lkhknOFPOLXJEidIUo8rUA&s=19" allowfullscreen></iframe>
+    <div id="tweet-container">
+        <blockquote class="twitter-tweet">
+            <a href="https://x.com/hussain_tarana/status/1815194875148816467?t=lkhknOFPOLXJEidIUo8rUA&s=19"></a>
+        </blockquote>
+        <blockquote class="twitter-tweet">
+            <a href="https://x.com/xForNature/status/1817130412075839515?t=lkhknOFPOLXJEidIUo8rUA&s=19"></a>
+        </blockquote>
+        <blockquote class="twitter-tweet">
+            <a href="https://x.com/hussain_tarana/status/1817029776173109437?t=lkhknOFPOLXJEidIUo8rUA&s=19"></a>
+        </blockquote>
+        <blockquote class="twitter-tweet">
+            <a href="https://x.com/hussain_tarana/status/1815599852128190782?t=Pp5B2FsJZXXsIcHCK12fLw&s=19"></a>
+        </blockquote>
     </div>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const videoContainer = document.getElementById("video-container");
-            const iframes = videoContainer.getElementsByTagName("iframe");
+            const tweetContainer = document.getElementById("tweet-container");
+            const tweets = tweetContainer.getElementsByClassName("tweet");
 
             let startY = 0;
             let endY = 0;
@@ -52,31 +62,31 @@
             });
 
             function handleTouchScroll() {
-                let closestIframe = null;
+                let closestTweet = null;
                 let closestDistance = Infinity;
 
-                Array.from(iframes).forEach(iframe => {
-                    const rect = iframe.getBoundingClientRect();
+                Array.from(tweets).forEach(tweet => {
+                    const rect = tweet.getBoundingClientRect();
                     const distance = Math.abs(rect.top);
 
                     if (distance < closestDistance) {
-                        closestIframe = iframe;
+                        closestTweet = tweet;
                         closestDistance = distance;
                     }
                 });
 
-                if (closestIframe) {
+                if (closestTweet) {
                     if (startY > endY) {
                         // Scroll down
-                        const nextIframe = closestIframe.nextElementSibling;
-                        if (nextIframe) {
-                            nextIframe.scrollIntoView({ block: 'start' });
+                        const nextTweet = closestTweet.nextElementSibling;
+                        if (nextTweet) {
+                            nextTweet.scrollIntoView({ block: 'start' });
                         }
                     } else {
                         // Scroll up
-                        const previousIframe = closestIframe.previousElementSibling;
-                        if (previousIframe) {
-                            previousIframe.scrollIntoView({ block: 'start' });
+                        const previousTweet = closestTweet.previousElementSibling;
+                        if (previousTweet) {
+                            previousTweet.scrollIntoView({ block: 'start' });
                         }
                     }
                 }
