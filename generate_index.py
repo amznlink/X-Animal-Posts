@@ -2,12 +2,12 @@ import csv
 
 def generate_index():
     csv_file = 'data.csv'
-    video_urls = []
+    tweet_urls = []
 
     with open(csv_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            video_urls.append(row[0])
+            tweet_urls.append(row[0])
 
     with open('index.html', 'w') as f:
         f.write("""<!DOCTYPE html>
@@ -26,13 +26,13 @@ def generate_index():
             height: 100vh;
             overflow-y: scroll;
         }
-        #video-container {
+        #tweet-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             scroll-snap-type: y mandatory;
         }
-        iframe {
+        .tweet {
             width: 100%;
             height: 100vh;
             scroll-snap-align: start;
@@ -41,19 +41,21 @@ def generate_index():
     </style>
 </head>
 <body>
-    <div id="video-container">""")
+    <div id="tweet-container">""")
 
-        for url in video_urls:
-            embed_url = f"https://twitframe.com/show?url={url}"
+        for url in tweet_urls:
             f.write(f"""
-        <iframe src="{embed_url}" allowfullscreen></iframe>""")
+        <blockquote class="twitter-tweet">
+            <a href="{url}"></a>
+        </blockquote>""")
 
         f.write("""
     </div>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const videoContainer = document.getElementById("video-container");
-            const iframes = videoContainer.getElementsByTagName("iframe");
+            const tweetContainer = document.getElementById("tweet-container");
+            const tweets = tweetContainer.getElementsByClassName("tweet");
 
             let startY = 0;
             let endY = 0;
@@ -68,31 +70,31 @@ def generate_index():
             });
 
             function handleTouchScroll() {
-                let closestIframe = null;
+                let closestTweet = null;
                 let closestDistance = Infinity;
 
-                Array.from(iframes).forEach(iframe => {
-                    const rect = iframe.getBoundingClientRect();
+                Array.from(tweets).forEach(tweet => {
+                    const rect = tweet.getBoundingClientRect();
                     const distance = Math.abs(rect.top);
 
                     if (distance < closestDistance) {
-                        closestIframe = iframe;
+                        closestTweet = tweet;
                         closestDistance = distance;
                     }
                 });
 
-                if (closestIframe) {
+                if (closestTweet) {
                     if (startY > endY) {
                         // Scroll down
-                        const nextIframe = closestIframe.nextElementSibling;
-                        if (nextIframe) {
-                            nextIframe.scrollIntoView({ block: 'start' });
+                        const nextTweet = closestTweet.nextElementSibling;
+                        if (nextTweet) {
+                            nextTweet.scrollIntoView({ block: 'start' });
                         }
                     } else {
                         // Scroll up
-                        const previousIframe = closestIframe.previousElementSibling;
-                        if (previousIframe) {
-                            previousIframe.scrollIntoView({ block: 'start' });
+                        const previousTweet = closestTweet.previousElementSibling;
+                        if (previousTweet) {
+                            previousTweet.scrollIntoView({ block: 'start' });
                         }
                     }
                 }
