@@ -7,7 +7,8 @@ def generate_index():
     with open(csv_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            blockquotes_and_scripts.append(row[0])
+            if row:  # Ensure the row is not empty
+                blockquotes_and_scripts.append(row[0])
 
     with open('index.html', 'w') as f:
         f.write("""<!DOCTYPE html>
