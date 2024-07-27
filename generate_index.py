@@ -2,12 +2,12 @@ import csv
 
 def generate_index():
     csv_file = 'data.csv'
-    tweet_urls = []
+    blockquotes = []
 
     with open(csv_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            tweet_urls.append(row[0])
+            blockquotes.append(row[0])
 
     with open('index.html', 'w') as f:
         f.write("""<!DOCTYPE html>
@@ -43,11 +43,9 @@ def generate_index():
 <body>
     <div id="tweet-container">""")
 
-        for url in tweet_urls:
+        for blockquote in blockquotes:
             f.write(f"""
-        <blockquote class="twitter-tweet">
-            <a href="{url}"></a>
-        </blockquote>""")
+        {blockquote}""")
 
         f.write("""
     </div>
