@@ -2,12 +2,12 @@ import csv
 
 def generate_index():
     csv_file = 'data.csv'
-    blockquotes = []
+    blockquotes_and_scripts = []
 
     with open(csv_file, newline='') as csvfile:
         reader = csv.reader(csvfile)
         for row in reader:
-            blockquotes.append(row[0])
+            blockquotes_and_scripts.append(row[0])
 
     with open('index.html', 'w') as f:
         f.write("""<!DOCTYPE html>
@@ -43,13 +43,12 @@ def generate_index():
 <body>
     <div id="tweet-container">""")
 
-        for blockquote in blockquotes:
+        for blockquote_and_script in blockquotes_and_scripts:
             f.write(f"""
-        {blockquote}""")
+        {blockquote_and_script}""")
 
         f.write("""
     </div>
-    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const tweetContainer = document.getElementById("tweet-container");
