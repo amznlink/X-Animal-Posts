@@ -64,36 +64,53 @@ def generate_index():
                 }, { threshold: 0.75 });
                 observer.observe(videoElement);
             });
-        });
 
-        window.addEventListener('scroll', function() {
-            const videos = document.querySelectorAll('video');
-            let closestVideo = null;
-            let closestDistance = Infinity;
+            let startY = 0;
+            let endY = 0;
 
-            videos.forEach(video => {
-                const rect = video.getBoundingClientRect();
-                const distance = Math.abs(rect.top);
-
-                if (distance < closestDistance) {
-                    closestVideo = video;
-                    closestDistance = distance;
-                }
+            document.addEventListener('touchstart', function(event) {
+                startY = event.touches[0].clientY;
             });
 
-            if (closestVideo) {
-                closestVideo.scrollIntoView({ behavior: 'fast', block: 'start' });
+            document.addEventListener('touchend', function(event) {
+                endY = event.changedTouches[0].clientY;
+                handleTouchScroll();
+            });
+
+            function handleTouchScroll() {
+                const videos = document.querySelectorAll('video');
+                let closestVideo = null;
+                let closestDistance = Infinity;
+
+                videos.forEach(video => {
+                    const rect = video.getBoundingClientRect();
+                    const distance = Math.abs(rect.top);
+
+                    if (distance < closestDistance) {
+                        closestVideo = video;
+                        closestDistance = distance;
+                    }
+                });
+
+                if (closestVideo) {
+                    if (startY > endY) {
+                        // Scroll down
+                        const nextVideo = closestVideo.nextElementSibling;
+                        if (nextVideo) {
+                            nextVideo.scrollIntoView({ block: 'start' });
+                        }
+                    } else {
+                        // Scroll up
+                        const previousVideo = closestVideo.previousElementSibling;
+                        if (previousVideo) {
+                            previousVideo.scrollIntoView({ block: 'start' });
+                        }
+                    }
+                }
             }
         });
 
-        // Override smooth scrolling duration
-        document.documentElement.style.scrollBehavior = 'fast';
-        window.addEventListener('scroll', () => {
-            clearTimeout(window.scrollTimeout);
-            window.scrollTimeout = setTimeout(() => {
-                document.documentElement.style.scrollBehavior = 'auto';
-            }, 100);
-        });
+        document.documentElement.style.scrollBehavior = 'auto';
     </script>
 </body>
 </html>""")
