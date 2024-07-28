@@ -19,10 +19,27 @@
     </style>
 </head>
 <body>
-    <div class="embed-container">
-        <!-- The HTML snippet returned by the oEmbed API -->
-        <a class="twitter-timeline" href="https://twitter.com/buitengebieden/status/1817233571238617530">Tweets by buitengebieden</a>
-    </div>
+    <div class="embed-container" id="twitter-embed"></div>
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // URL of the tweet to be embedded
+            const tweetUrl = "https://twitter.com/buitengebieden/status/1817233571238617530";
+
+            // Fetch the oEmbed API response
+            fetch(`https://publish.twitter.com/oembed?url=${encodeURIComponent(tweetUrl)}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Insert the HTML snippet into the container
+                    document.getElementById('twitter-embed').innerHTML = data.html;
+                    
+                    // Ensure the Twitter widgets.js script runs to render the embedded tweet
+                    if (typeof twttr !== "undefined") {
+                        twttr.widgets.load();
+                    }
+                })
+                .catch(error => console.error('Error fetching the tweet:', error));
+        });
+    </script>
 </body>
 </html>
