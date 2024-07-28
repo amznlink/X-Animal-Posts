@@ -1,72 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Twitter Video Gallery</title>
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background-color: #f2f2f2;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    
-    .video-container {
-      position: relative;
-      width: 90%; /* Adjust the width as needed */
-      margin: 20px 0;
-      padding-bottom: 56.25%; /* 16:9 aspect ratio */
-      height: 0;
-      overflow: hidden;
-    }
-    
-    .video-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animals</title>
 </head>
 <body>
-  <div id="videos"></div>
-
-  <script id="csv-data" type="text/plain">
-    https://x.com/angie_karan/status/1552988462730846208?t=UWUm2mKoM0YktGXDc7MOsQ&s=19
-    https://x.com/Fernand92542445/status/1550540294189420544?t=UWUm2mKoM0YktGXDc7MOsQ&s=19
-    https://x.com/nature_petals/status/1551221034334175232?t=UWUm2mKoM0YktGXDc7MOsQ&s=19
-    https://x.com/JennyPaPB/status/1551287833784205325?t=wcM-EbyrGwt1lqNoDcNTsA&s=19
-  </script>
-
-  <script>
-    const csvDataElement = document.getElementById('csv-data');
-    const csvData = csvDataElement.textContent.trim();
-    const videosContainer = document.getElementById('videos');
-    
-    const rows = csvData.split('\n').filter(row => row.trim() !== ''); // Remove empty lines
-    rows.forEach((row) => {
-      const videoUrl = row.trim();
-      if (videoUrl) {
-        createIframe(videoUrl);
-      }
-    });
-    
-    function createIframe(url) {
-      const iframeContainer = document.createElement('div');
-      iframeContainer.classList.add('video-container');
-      
-      const iframe = document.createElement('iframe');
-      iframe.src = url;
-      iframe.allowFullscreen = true;
-      
-      iframeContainer.appendChild(iframe);
-      videosContainer.appendChild(iframeContainer);
-    }
-  </script>
+    <blockquote class="twitter-tweet" data-media-max-width="580">
+        <p lang="it" dir="ltr">Angry potato 
+            <a href="https://t.co/Jcj62CbLBj">pic.twitter.com/Jcj62CbLBj</a>
+        </p>&mdash; Nature is Amazing ☘️ (@AMAZlNGNATURE) 
+        <a href="https://twitter.com/AMAZlNGNATURE/status/1817339285709689170?ref_src=twsrc%5Etfw">July 27, 2024</a>
+    </blockquote> 
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <br>
+    <blockquote class="twitter-tweet" data-media-max-width="580">
+        <p lang="en" dir="ltr">Friendship goals.. 😊 
+            <a href="https://t.co/6zFVX5MGfE">pic.twitter.com/6zFVX5MGfE</a>
+        </p>&mdash; Buitengebieden (@buitengebieden) 
+        <a href="https://twitter.com/buitengebieden/status/1817233571238617530?ref_src=twsrc%5Etfw">July 27, 2024</a>
+    </blockquote> 
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+  <br>
 </body>
 </html>
