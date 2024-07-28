@@ -68,7 +68,7 @@ def main():
     html_content = generate_html(embed_codes)
     
     # Write HTML to file
-    with open('embedded_tweets.html', 'w') as file:
+    with open('index.html', 'w') as file:
         file.write(html_content)
 
 if __name__ == "__main__":
