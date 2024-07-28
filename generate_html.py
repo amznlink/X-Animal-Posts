@@ -23,7 +23,7 @@ def generate_html(embed_codes):
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Embedded Tweets</title>
+        <title>Animals</title>
         <style>
             body, html {
                 height: 100%;
