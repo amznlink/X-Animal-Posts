@@ -27,7 +27,7 @@
             const tweetUrl = "https://twitter.com/buitengebieden/status/1817233571238617530";
 
             // Fetch the oEmbed API response
-            fetch(`https://publish.twitter.com/oembed?url=${encodeURIComponent(tweetUrl)}`)
+            fetch(`https://publish.twitter.com/oembed?url=${encodeURIComponent(tweetUrl)}&format=json`)
                 .then(response => response.json())
                 .then(data => {
                     // Insert the HTML snippet into the container
